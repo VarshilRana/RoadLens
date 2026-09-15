@@ -1,0 +1,2664 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="RoadLens — smarter roads through community reporting and intelligent road insights.">
+  <title>RoadLens — See the Road. Shape the Future.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --ink: #10211d;
+      --muted: #687671;
+      --paper: #f5f7f4;
+      --surface: #fff;
+      --line: #dfe6e1;
+      --brand: #1e6b52;
+      --brand-2: #b9e769;
+      --dark: #12251f;
+      --danger: #d85d48;
+      --shadow: 0 20px 60px rgba(16, 33, 29, .10);
+      --radius: 22px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    html {
+      scroll-behavior: smooth
+    }
+
+    body {
+      font-family: "DM Sans", sans-serif;
+      color: var(--ink);
+      background: var(--paper);
+      line-height: 1.5;
+      overflow-x: hidden
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit
+    }
+
+    button {
+      font: inherit;
+      border: 0;
+      cursor: pointer
+    }
+
+    .container {
+      width: min(1160px, calc(100% - 40px));
+      margin: auto
+    }
+
+    .nav {
+      height: 78px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      z-index: 20
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: "Space Grotesk";
+      font-weight: 700;
+      font-size: 20px;
+      letter-spacing: -.5px
+    }
+
+    .brand-mark {
+      width: 34px;
+      height: 34px;
+      border-radius: 11px;
+      background: var(--dark);
+      display: grid;
+      place-items: center;
+      position: relative;
+      overflow: hidden
+    }
+
+    .brand-mark:before {
+      content: "";
+      width: 19px;
+      height: 5px;
+      border-radius: 99px;
+      background: var(--brand-2);
+      transform: rotate(-28deg)
+    }
+
+    .brand-mark:after {
+      content: "";
+      position: absolute;
+      width: 5px;
+      height: 5px;
+      background: #fff;
+      border-radius: 50%;
+      top: 8px;
+      right: 7px
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 30px;
+      align-items: center;
+      color: #596863;
+      font-size: 14px;
+      font-weight: 600
+    }
+
+    .nav-links a {
+      transition: .25s
+    }
+
+    .nav-links a:hover {
+      color: var(--brand)
+    }
+
+    .nav-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      padding: 12px 18px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 14px;
+      transition: .25s
+    }
+
+    .btn:hover {
+      transform: translateY(-2px)
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--ink)
+    }
+
+    .btn-primary {
+      background: var(--dark);
+      color: white;
+      box-shadow: 0 8px 20px rgba(18, 37, 31, .15)
+    }
+
+    .btn-primary:hover {
+      background: #1e493d
+    }
+
+    .btn-lime {
+      background: var(--brand-2);
+      color: var(--dark)
+    }
+
+    .mobile-toggle {
+      display: none;
+      background: none;
+      font-size: 25px
+    }
+
+    .hero {
+      padding: 65px 0 90px;
+      position: relative
+    }
+
+    .hero:before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 80% 15%, rgba(185, 231, 105, .28), transparent 29%), radial-gradient(circle at 5% 60%, rgba(30, 107, 82, .09), transparent 25%);
+      pointer-events: none
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.03fr .97fr;
+      gap: 65px;
+      align-items: center;
+      position: relative
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #e7eee9;
+      border: 1px solid #d5e1d9;
+      border-radius: 99px;
+      padding: 7px 11px;
+      color: var(--brand);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      margin-bottom: 23px
+    }
+
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--brand)
+    }
+
+    h1 {
+      font-family: "Space Grotesk";
+      font-size: clamp(48px, 6.2vw, 78px);
+      line-height: .98;
+      letter-spacing: -4px;
+      max-width: 680px
+    }
+
+    h1 span {
+      color: var(--brand)
+    }
+
+    .hero-copy {
+      font-size: 18px;
+      color: var(--muted);
+      max-width: 570px;
+      margin: 25px 0 32px
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap
+    }
+
+    .trust {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      margin-top: 30px;
+      color: #75827e;
+      font-size: 12px
+    }
+
+    .avatars {
+      display: flex
+    }
+
+    .avatar {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 2px solid var(--paper);
+      margin-left: -7px;
+      background: #dce6df;
+      display: grid;
+      place-items: center;
+      font-size: 10px;
+      font-weight: 800
+    }
+
+    .avatar:first-child {
+      margin-left: 0
+    }
+
+    .visual {
+      min-height: 510px;
+      position: relative
+    }
+
+    .map-card {
+      position: absolute;
+      inset: 0 0 0 15px;
+      border-radius: 28px;
+      background: #dfe9df;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      border: 1px solid #d2ddd4
+    }
+
+    .map-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(35deg, transparent 45%, rgba(255, 255, 255, .8) 46%, rgba(255, 255, 255, .8) 49%, transparent 50%),
+        linear-gradient(145deg, transparent 44%, rgba(255, 255, 255, .75) 45%, rgba(255, 255, 255, .75) 48%, transparent 49%),
+        repeating-linear-gradient(12deg, rgba(80, 110, 91, .06) 0 2px, transparent 2px 32px);
+      transform: scale(1.25);
+      opacity: .95
+    }
+
+    .road {
+      position: absolute;
+      background: #aab7ac;
+      box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .35)
+    }
+
+    .road.one {
+      width: 130%;
+      height: 70px;
+      top: 48%;
+      left: -15%;
+      transform: rotate(-20deg)
+    }
+
+    .road.two {
+      width: 110%;
+      height: 58px;
+      top: 23%;
+      left: -3%;
+      transform: rotate(32deg)
+    }
+
+    .road.three {
+      width: 100%;
+      height: 48px;
+      top: 72%;
+      left: 10%;
+      transform: rotate(8deg)
+    }
+
+    .road:after {
+      content: "";
+      position: absolute;
+      inset: 50% 0 auto;
+      border-top: 2px dashed rgba(255, 255, 255, .75)
+    }
+
+    .map-pin {
+      position: absolute;
+      width: 48px;
+      height: 48px;
+      border-radius: 50% 50% 50% 6px;
+      background: var(--danger);
+      transform: rotate(-45deg);
+      display: grid;
+      place-items: center;
+      box-shadow: 0 10px 20px rgba(216, 93, 72, .28);
+      animation: float 3s ease-in-out infinite
+    }
+
+    .map-pin:after {
+      content: "";
+      width: 14px;
+      height: 14px;
+      background: white;
+      border-radius: 50%
+    }
+
+    .pin1 {
+      top: 42%;
+      left: 45%
+    }
+
+    .pin2 {
+      top: 23%;
+      left: 69%;
+      animation-delay: .8s;
+      background: var(--brand)
+    }
+
+    .pin3 {
+      top: 66%;
+      left: 26%;
+      animation-delay: 1.4s;
+      background: #e1a840
+    }
+
+    .map-label {
+      position: absolute;
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      padding: 9px 12px;
+      font-size: 11px;
+      font-weight: 700;
+      box-shadow: 0 8px 22px rgba(16, 33, 29, .10)
+    }
+
+    .label1 {
+      top: 35%;
+      left: 52%
+    }
+
+    .label2 {
+      top: 18%;
+      right: 8%
+    }
+
+    .label3 {
+      bottom: 19%;
+      left: 10%
+    }
+
+    .map-ui {
+      position: absolute;
+      right: 16px;
+      top: 16px;
+      background: rgba(255, 255, 255, .94);
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      padding: 10px;
+      display: grid;
+      gap: 7px
+    }
+
+    .map-ui span {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      display: block;
+      background: var(--brand)
+    }
+
+    .map-ui span:nth-child(2) {
+      background: var(--danger)
+    }
+
+    .map-ui span:nth-child(3) {
+      background: #e1a840
+    }
+
+    .status-card {
+      position: absolute;
+      left: -18px;
+      bottom: 28px;
+      width: 245px;
+      background: rgba(255, 255, 255, .97);
+      border: 1px solid var(--line);
+      border-radius: 19px;
+      padding: 17px;
+      box-shadow: 0 18px 45px rgba(16, 33, 29, .15);
+      animation: slideUp .7s ease both
+    }
+
+    .status-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 13px
+    }
+
+    .status-top b {
+      font-size: 13px
+    }
+
+    .live {
+      font-size: 10px;
+      color: var(--brand);
+      font-weight: 800;
+      background: #e7f1e8;
+      padding: 5px 8px;
+      border-radius: 99px
+    }
+
+    .issue {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      padding: 8px 0;
+      border-top: 1px solid #edf0ee;
+      font-size: 11px
+    }
+
+    .issue i {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--danger)
+    }
+
+    .issue:nth-child(3) i {
+      background: #e1a840
+    }
+
+    .section {
+      padding: 95px 0
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 30px;
+      margin-bottom: 45px
+    }
+
+    .section-kicker {
+      color: var(--brand);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1.4px;
+      margin-bottom: 10px
+    }
+
+    h2 {
+      font-family: "Space Grotesk";
+      font-size: clamp(34px, 4vw, 52px);
+      line-height: 1.02;
+      letter-spacing: -2.2px
+    }
+
+    .section-head p {
+      max-width: 420px;
+      color: var(--muted)
+    }
+
+    .stats {
+      background: var(--dark);
+      color: white;
+      padding: 45px 0
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: rgba(255, 255, 255, .12)
+    }
+
+    .stat {
+      background: var(--dark);
+      padding: 10px 25px
+    }
+
+    .stat strong {
+      font-family: "Space Grotesk";
+      font-size: 38px;
+      letter-spacing: -1.5px;
+      display: block
+    }
+
+    .stat span {
+      color: #aab8b2;
+      font-size: 12px
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px
+    }
+
+    .feature {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 28px;
+      min-height: 265px;
+      transition: .3s;
+      position: relative;
+      overflow: hidden
+    }
+
+    .feature:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow);
+      border-color: #cad7cf
+    }
+
+    .feature-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      background: #e9f1eb;
+      color: var(--brand);
+      display: grid;
+      place-items: center;
+      font-size: 20px;
+      margin-bottom: 45px
+    }
+
+    .feature h3 {
+      font-family: "Space Grotesk";
+      font-size: 21px;
+      margin-bottom: 8px
+    }
+
+    .feature p {
+      font-size: 13px;
+      color: var(--muted)
+    }
+
+    .feature-number {
+      position: absolute;
+      right: 22px;
+      top: 22px;
+      color: #d7dfda;
+      font-family: "Space Grotesk";
+      font-weight: 700
+    }
+
+    .report {
+      background: #e9efe9
+    }
+
+    .report-grid {
+      display: grid;
+      grid-template-columns: .9fr 1.1fr;
+      gap: 70px;
+      align-items: center
+    }
+
+    .steps {
+      display: grid;
+      gap: 13px;
+      margin-top: 30px
+    }
+
+    .step {
+      display: flex;
+      gap: 15px;
+      padding: 15px;
+      border-radius: 16px;
+      transition: .2s
+    }
+
+    .step:hover {
+      background: white
+    }
+
+    .step-num {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      background: var(--dark);
+      color: white;
+      display: grid;
+      place-items: center;
+      font-size: 12px;
+      font-weight: 800;
+      flex: none
+    }
+
+    .step h4 {
+      font-family: "Space Grotesk";
+      font-size: 15px
+    }
+
+    .step p {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 2px
+    }
+
+    .phone {
+      justify-self: end;
+      width: min(390px, 100%);
+      background: var(--dark);
+      border-radius: 31px;
+      padding: 12px;
+      box-shadow: 0 25px 60px rgba(16, 33, 29, .25);
+      transform: rotate(2deg)
+    }
+
+    .phone-screen {
+      background: #f6f8f5;
+      border-radius: 23px;
+      overflow: hidden;
+      padding: 20px;
+      min-height: 520px
+    }
+
+    .phone-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px
+    }
+
+    .mini-brand {
+      font-family: "Space Grotesk";
+      font-weight: 700;
+      font-size: 14px
+    }
+
+    .mini-avatar {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: #d4e2d8
+    }
+
+    .camera {
+      height: 185px;
+      border-radius: 18px;
+      background: linear-gradient(145deg, #9daa9f, #cbd5c9);
+      position: relative;
+      overflow: hidden
+    }
+
+    .camera:before {
+      content: "";
+      position: absolute;
+      width: 160%;
+      height: 55px;
+      background: #7f8d82;
+      top: 75px;
+      left: -30%;
+      transform: rotate(-12deg)
+    }
+
+    .scan {
+      position: absolute;
+      inset: 25px;
+      border: 1.5px dashed white;
+      border-radius: 13px
+    }
+
+    .camera-tip {
+      position: absolute;
+      bottom: 10px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      color: white;
+      font-size: 10px;
+      font-weight: 700
+    }
+
+    .input-mock {
+      height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      margin-top: 12px;
+      background: white;
+      padding: 12px;
+      color: #83908b;
+      font-size: 11px
+    }
+
+    .send-mock {
+      height: 43px;
+      border-radius: 11px;
+      background: var(--brand);
+      color: white;
+      display: grid;
+      place-items: center;
+      font-size: 12px;
+      font-weight: 800;
+      margin-top: 12px
+    }
+
+    .cta {
+      padding: 85px 0
+    }
+
+    .cta-box {
+      background: var(--brand);
+      border-radius: 28px;
+      color: white;
+      padding: 55px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 30px;
+      overflow: hidden;
+      position: relative
+    }
+
+    .cta-box:after {
+      content: "";
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      border: 60px solid rgba(255, 255, 255, .07);
+      right: -80px;
+      top: -120px
+    }
+
+    .cta-box h2 {
+      max-width: 600px
+    }
+
+    .cta-box p {
+      color: #d3e3db;
+      margin-top: 12px;
+      max-width: 520px
+    }
+
+    footer {
+      padding: 35px 0;
+      border-top: 1px solid var(--line);
+      font-size: 12px;
+      color: var(--muted)
+    }
+
+    .footer-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 22px
+    }
+
+    .toast {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      background: var(--dark);
+      color: white;
+      padding: 14px 18px;
+      border-radius: 13px;
+      font-size: 13px;
+      box-shadow: var(--shadow);
+      transform: translateY(120px);
+      opacity: 0;
+      transition: .3s;
+      z-index: 50
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1
+    }
+
+    @keyframes float {
+
+      0%,
+      100% {
+        translate: 0 0
+      }
+
+      50% {
+        translate: 0 -10px
+      }
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(25px);
+      transition: .7s ease
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: none
+    }
+
+    @media(max-width:850px) {
+
+      .nav-links,
+      .nav-actions {
+        display: none
+      }
+
+      .mobile-toggle {
+        display: block
+      }
+
+      .nav-links.open {
+        display: flex;
+        position: absolute;
+        top: 70px;
+        left: 0;
+        right: 0;
+        background: white;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 18px;
+        flex-direction: column;
+        align-items: flex-start;
+        box-shadow: var(--shadow)
+      }
+
+      .hero-grid,
+      .report-grid {
+        grid-template-columns: 1fr
+      }
+
+      .hero {
+        padding-top: 40px
+      }
+
+      .visual {
+        min-height: 430px;
+        margin-top: 20px
+      }
+
+      .map-card {
+        inset: 0
+      }
+
+      .status-card {
+        left: 5px
+      }
+
+      .feature-grid {
+        grid-template-columns: 1fr
+      }
+
+      .stat-grid {
+        grid-template-columns: repeat(2, 1fr)
+      }
+
+      .stat {
+        padding: 20px
+      }
+
+      .section-head {
+        align-items: flex-start;
+        flex-direction: column
+      }
+
+      .phone {
+        justify-self: center;
+        transform: none
+      }
+
+      .cta-box {
+        padding: 38px;
+        flex-direction: column;
+        align-items: flex-start
+      }
+    }
+
+    @media(max-width:480px) {
+      .container {
+        width: min(100% - 28px, 1160px)
+      }
+
+      h1 {
+        letter-spacing: -2.5px;
+        font-size: 47px
+      }
+
+      .hero-copy {
+        font-size: 16px
+      }
+
+      .visual {
+        min-height: 360px
+      }
+
+      .map-card {
+        border-radius: 21px
+      }
+
+      .status-card {
+        width: 220px;
+        bottom: 10px
+      }
+
+      .stat-grid {
+        grid-template-columns: 1fr 1fr
+      }
+
+      .stat strong {
+        font-size: 30px
+      }
+
+      .cta-box {
+        border-radius: 20px
+      }
+
+      .footer-row {
+        align-items: flex-start;
+        flex-direction: column
+      }
+    }
+
+    /* =========================================
+   ROADLENS REPORT MODAL
+========================================= */
+
+    .report-modal {
+      position: fixed;
+      inset: 0;
+
+      z-index: 9999;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      padding: 24px;
+
+      opacity: 0;
+      visibility: hidden;
+
+      transition:
+        opacity .25s ease,
+        visibility .25s ease;
+    }
+
+    .report-modal.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+
+    /* Backdrop */
+
+    .report-backdrop {
+      position: absolute;
+      inset: 0;
+
+      background: rgba(10, 27, 21, .65);
+
+      backdrop-filter: blur(8px);
+    }
+
+
+    /* Modal */
+
+    .report-dialog {
+      position: relative;
+
+      width: min(820px, 100%);
+
+      max-height: 90vh;
+
+      overflow-y: auto;
+
+      padding: 34px;
+
+      background: #f8faf7;
+
+      border: 1px solid rgba(255, 255, 255, .55);
+
+      border-radius: 28px;
+
+      box-shadow:
+        0 35px 100px rgba(0, 0, 0, .28);
+
+      transform:
+        translateY(25px) scale(.97);
+
+      transition:
+        transform .3s ease;
+    }
+
+    .report-modal.open .report-dialog {
+      transform:
+        translateY(0) scale(1);
+    }
+
+
+    /* Close */
+
+    .report-close {
+      position: absolute;
+
+      top: 20px;
+      right: 20px;
+
+      width: 38px;
+      height: 38px;
+
+      border: none;
+
+      border-radius: 12px;
+
+      background: #edf1ed;
+
+      color: #53615b;
+
+      font-size: 24px;
+
+      cursor: pointer;
+
+      transition: .2s;
+    }
+
+    .report-close:hover {
+      background: #dfe8e1;
+
+      transform:
+        rotate(5deg);
+    }
+
+
+    /* Header */
+
+    .report-dialog-head {
+      display: flex;
+
+      justify-content: space-between;
+
+      gap: 30px;
+
+      padding-right: 45px;
+
+      margin-bottom: 30px;
+    }
+
+    .report-eyebrow {
+      margin-bottom: 9px;
+
+      color: var(--brand);
+
+      font-size: 10px;
+
+      font-weight: 800;
+
+      letter-spacing: 1.5px;
+    }
+
+    .report-eyebrow span {
+      display: inline-block;
+
+      width: 6px;
+      height: 6px;
+
+      margin-right: 5px;
+
+      border-radius: 50%;
+
+      background: var(--brand);
+    }
+
+    .report-dialog-head h2 {
+      margin-bottom: 7px;
+
+      font-family: "Space Grotesk";
+
+      font-size: 35px;
+
+      line-height: 1.05;
+
+      letter-spacing: -1.7px;
+    }
+
+    .report-dialog-head p {
+      color: var(--muted);
+
+      font-size: 13px;
+    }
+
+    .report-step {
+      padding-top: 7px;
+
+      color: #9aa59f;
+
+      font-family: "Space Grotesk";
+
+      font-size: 12px;
+
+      white-space: nowrap;
+    }
+
+    .report-step strong {
+      color: var(--dark);
+
+      font-size: 22px;
+    }
+
+
+    /* Form */
+
+    .report-form-grid {
+      display: grid;
+
+      grid-template-columns:
+        1fr 1fr;
+
+      gap: 20px;
+    }
+
+    .report-field.full {
+      grid-column: 1 / -1;
+    }
+
+    .report-field label {
+      display: flex;
+
+      align-items: center;
+
+      gap: 5px;
+
+      margin-bottom: 8px;
+
+      color: #4d5c56;
+
+      font-size: 11px;
+
+      font-weight: 800;
+
+      letter-spacing: .9px;
+
+      text-transform: uppercase;
+    }
+
+    .report-field label .required {
+      color: var(--danger);
+    }
+
+    .report-field label .optional {
+      color: #9aa59f;
+
+      font-size: 10px;
+
+      font-weight: 600;
+
+      letter-spacing: 0;
+
+      text-transform: none;
+    }
+
+
+    /* Inputs */
+
+    .report-field input[type="text"],
+    .report-field select,
+    .report-field textarea {
+
+      width: 100%;
+
+      border: 1px solid #dbe4de;
+
+      outline: none;
+
+      background: white;
+
+      color: var(--ink);
+
+      font-family: "DM Sans";
+
+      font-size: 13px;
+
+      border-radius: 13px;
+
+      transition: .2s;
+    }
+
+    .report-field input[type="text"],
+    .report-field select {
+
+      height: 48px;
+
+      padding: 0 14px;
+    }
+
+    .report-field textarea {
+
+      min-height: 105px;
+
+      padding: 13px 14px;
+
+      resize: vertical;
+    }
+
+    .report-field input:focus,
+    .report-field select:focus,
+    .report-field textarea:focus {
+
+      border-color: #79a992;
+
+      box-shadow:
+        0 0 0 4px rgba(30, 107, 82, .08);
+    }
+
+
+    /* Select */
+
+    .report-select {
+      position: relative;
+    }
+
+    .report-select::after {
+
+      content: "⌄";
+
+      position: absolute;
+
+      top: 12px;
+      right: 15px;
+
+      color: #697770;
+
+      pointer-events: none;
+    }
+
+    .report-select select {
+
+      appearance: none;
+    }
+
+
+    /* Severity */
+
+    .severity-options {
+
+      display: grid;
+
+      grid-template-columns:
+        repeat(3, 1fr);
+
+      gap: 8px;
+    }
+
+    .severity-card {
+
+      position: relative;
+
+      display: block !important;
+
+      margin: 0 !important;
+
+      padding: 10px !important;
+
+      min-height: 48px;
+
+      border:
+        1px solid #dbe4de;
+
+      border-radius: 13px;
+
+      background: white;
+
+      cursor: pointer;
+
+      text-transform: none !important;
+
+      letter-spacing: 0 !important;
+
+      transition: .2s;
+    }
+
+    .severity-card:hover {
+
+      border-color:
+        #b8cbbd;
+
+      transform:
+        translateY(-1px);
+    }
+
+    .severity-card input {
+
+      position: absolute;
+
+      opacity: 0;
+    }
+
+    .severity-content {
+
+      display: flex;
+
+      flex-direction: column;
+
+      gap: 2px;
+    }
+
+    .severity-content strong {
+
+      color: var(--ink);
+
+      font-size: 11px;
+    }
+
+    .severity-content small {
+
+      color: #8a9690;
+
+      font-size: 9px;
+    }
+
+
+    /* Selected severity */
+
+    .severity-card:has(input:checked) {
+
+      border-color:
+        var(--brand);
+
+      background:
+        #edf5ef;
+
+      box-shadow:
+        0 0 0 2px rgba(30, 107, 82, .08);
+    }
+
+
+    /* =========================================
+   PHOTO UPLOAD
+========================================= */
+
+    .photo-upload {
+      position: relative;
+
+      width: 100%;
+      min-height: 150px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      overflow: hidden;
+
+      border: 1.5px dashed #9db9aa;
+      border-radius: 16px;
+
+      background: #fbfdfb;
+
+      cursor: pointer;
+
+      transition:
+        border-color .2s ease,
+        background .2s ease,
+        box-shadow .2s ease;
+    }
+
+    .photo-upload:hover,
+    .photo-upload.dragging {
+      border-color: var(--brand);
+      background: #f4f9f5;
+    }
+
+
+    /* Upload empty state */
+
+    .photo-empty {
+      width: 100%;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      gap: 14px;
+
+      padding: 25px;
+    }
+
+    .photo-empty[hidden] {
+      display: none;
+    }
+
+
+    .upload-icon {
+      width: 48px;
+      height: 48px;
+
+      flex: 0 0 48px;
+
+      display: grid;
+      place-items: center;
+
+      border-radius: 14px;
+
+      background: #e9f2eb;
+
+      color: var(--brand);
+
+      font-size: 27px;
+      font-weight: 700;
+
+      line-height: 1;
+    }
+
+
+    .photo-upload-content {
+      display: flex;
+      flex-direction: column;
+
+      gap: 5px;
+    }
+
+
+    .photo-upload-title {
+      color: #66756e;
+
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+
+    .photo-browse {
+      padding: 0;
+      margin: 0;
+
+      border: 0;
+
+      background: transparent;
+
+      color: var(--brand);
+
+      font: inherit;
+      font-weight: 700;
+
+      text-decoration: underline;
+      text-underline-offset: 3px;
+
+      cursor: pointer;
+    }
+
+
+    .photo-browse:hover {
+      color: var(--dark);
+    }
+
+
+    .photo-upload-help {
+      color: #9aa59f;
+
+      font-size: 10px;
+      line-height: 1.4;
+    }
+
+
+    /* =========================================
+   PHOTO PREVIEW
+========================================= */
+
+    .photo-preview {
+      width: 100%;
+
+      display: grid;
+      grid-template-columns: 76px minmax(0, 1fr) 36px;
+
+      align-items: center;
+
+      gap: 13px;
+
+      padding: 12px;
+    }
+
+
+    .photo-preview[hidden] {
+      display: none;
+    }
+
+
+    .photo-preview-image {
+      width: 76px;
+      height: 68px;
+
+      overflow: hidden;
+
+      border-radius: 11px;
+
+      background: #e8eee9;
+    }
+
+
+    .photo-preview-image img {
+      display: block;
+
+      width: 100%;
+      height: 100%;
+
+      object-fit: cover;
+
+      border-radius: 11px;
+    }
+
+
+    .photo-details {
+      min-width: 0;
+    }
+
+
+    .photo-details strong {
+      display: block;
+
+      overflow: hidden;
+
+      color: var(--ink);
+
+      font-size: 12px;
+      font-weight: 700;
+
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+
+    .photo-details small {
+      display: block;
+
+      margin-top: 3px;
+
+      color: #8a9690;
+
+      font-size: 10px;
+    }
+
+
+    .photo-remove {
+      width: 36px;
+      height: 36px;
+
+      display: grid;
+      place-items: center;
+
+      border: none;
+
+      border-radius: 10px;
+
+      background: #edf1ed;
+
+      color: #68756f;
+
+      font-size: 20px;
+
+      cursor: pointer;
+
+      transition:
+        background .2s ease,
+        color .2s ease,
+        transform .2s ease;
+    }
+
+
+    .photo-remove:hover {
+      background: #f9e9e5;
+
+      color: var(--danger);
+
+      transform: scale(1.04);
+    }
+
+
+    /* =========================================
+   PHOTO ERROR
+========================================= */
+
+    .photo-error {
+      display: block;
+
+      min-height: 0;
+
+      margin-top: 5px;
+
+      color: var(--danger);
+
+      font-size: 10px;
+    }
+
+
+    /* =========================================
+   DESCRIPTION
+========================================= */
+
+    .description-wrap {
+      position: relative;
+
+      width: 100%;
+    }
+
+
+    .description-wrap textarea {
+      display: block;
+
+      width: 100%;
+      min-height: 120px;
+
+      padding: 17px 17px 38px;
+
+      border: 1px solid #dbe4de;
+
+      border-radius: 13px;
+
+      outline: none;
+
+      background: white;
+
+      color: var(--ink);
+
+      font-family: "DM Sans", sans-serif;
+
+      font-size: 13px;
+      line-height: 1.6;
+
+      resize: vertical;
+
+      box-sizing: border-box;
+
+      transition:
+        border-color .2s ease,
+        box-shadow .2s ease;
+    }
+
+
+    .description-wrap textarea::placeholder {
+      color: #9aa59f;
+    }
+
+
+    .description-wrap textarea:focus {
+      border-color: #79a992;
+
+      box-shadow:
+        0 0 0 4px rgba(30, 107, 82, .08);
+    }
+
+
+    .description-wrap .character-counter {
+      position: absolute;
+
+      right: 14px;
+      bottom: 11px;
+
+      margin: 0;
+
+      color: #9aa59f;
+
+      font-size: 9px;
+
+      pointer-events: none;
+    }
+
+
+    /* Location */
+
+    .location-row {
+
+      display: grid;
+
+      grid-template-columns:
+        1fr auto;
+
+      gap: 9px;
+    }
+
+    .location-input {
+
+      position: relative;
+    }
+
+    .location-input span {
+
+      position: absolute;
+
+      left: 14px;
+      top: 10px;
+
+      color: var(--brand);
+
+      font-size: 19px;
+    }
+
+    .location-input input {
+
+      padding-left: 39px !important;
+    }
+
+    .location-button {
+
+      height: 48px;
+
+      padding: 0 15px;
+
+      border:
+        1px solid #cbd8cf;
+
+      border-radius: 13px;
+
+      background: #edf5ef;
+
+      color: var(--brand);
+
+      font-size: 11px;
+
+      font-weight: 800;
+
+      white-space: nowrap;
+
+      cursor: pointer;
+
+      transition: .2s;
+    }
+
+    .location-button:hover {
+
+      background: #e1eee4;
+    }
+
+    .location-button:disabled {
+
+      opacity: .6;
+
+      cursor: wait;
+    }
+
+
+    /* Character counter */
+
+    .character-counter {
+
+      margin-top: 4px;
+
+      text-align: right;
+
+      color: #9aa59f;
+
+      font-size: 9px;
+    }
+
+
+    /* Errors */
+
+    .report-error,
+    .photo-error {
+
+      display: block;
+
+      min-height: 0;
+
+      margin-top: 5px;
+
+      color: var(--danger);
+
+      font-size: 10px;
+    }
+
+    .report-field.invalid input,
+    .report-field.invalid select {
+
+      border-color:
+        var(--danger);
+    }
+
+
+    /* Footer */
+
+    .report-footer {
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: space-between;
+
+      gap: 20px;
+
+      margin-top: 24px;
+
+      padding-top: 19px;
+
+      border-top:
+        1px solid #e2e8e3;
+    }
+
+    .report-note {
+
+      max-width: 390px;
+
+      color: #7b8882;
+
+      font-size: 10px;
+    }
+
+    .report-note span {
+
+      margin-right: 4px;
+
+      color: var(--brand);
+
+      font-weight: 900;
+    }
+
+    .report-submit {
+
+      min-width: 158px;
+    }
+
+
+    /* Success */
+
+    .report-success {
+
+      padding:
+        25px 15px 8px;
+
+      text-align: center;
+    }
+
+    .success-icon {
+
+      width: 62px;
+      height: 62px;
+
+      display: grid;
+
+      place-items: center;
+
+      margin: 0 auto 20px;
+
+      border-radius: 20px;
+
+      background: #e2f0e5;
+
+      color: var(--brand);
+
+      font-size: 30px;
+
+      font-weight: 800;
+    }
+
+    .report-success h2 {
+
+      margin-bottom: 8px;
+
+      font-family: "Space Grotesk";
+
+      font-size: 34px;
+
+      letter-spacing: -1.5px;
+    }
+
+    .report-success>p {
+
+      margin-bottom: 22px;
+
+      color: var(--muted);
+
+      font-size: 13px;
+    }
+
+    .report-id {
+
+      width: min(380px, 100%);
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 10px;
+
+      margin: 0 auto 20px;
+
+      padding: 13px 14px;
+
+      border:
+        1px solid var(--line);
+
+      border-radius: 14px;
+
+      background: white;
+
+      text-align: left;
+    }
+
+    .report-id span {
+
+      color: #8b9791;
+
+      font-size: 9px;
+
+      font-weight: 800;
+
+      letter-spacing: 1px;
+
+      text-transform: uppercase;
+    }
+
+    .report-id strong {
+
+      flex: 1;
+
+      font-family: "Space Grotesk";
+
+      font-size: 14px;
+    }
+
+    .report-id button {
+
+      padding: 6px 9px;
+
+      border: none;
+
+      border-radius: 8px;
+
+      background: #edf3ee;
+
+      color: var(--brand);
+
+      font-size: 10px;
+
+      font-weight: 800;
+
+      cursor: pointer;
+    }
+
+
+    /* Mobile */
+
+    @media (max-width: 650px) {
+
+      .report-dialog {
+
+        padding: 25px 18px;
+
+        border-radius: 22px;
+      }
+
+      .report-dialog-head h2 {
+
+        font-size: 29px;
+      }
+
+      .report-step {
+
+        display: none;
+      }
+
+      .report-form-grid {
+
+        grid-template-columns: 1fr;
+      }
+
+      .report-field.full {
+
+        grid-column: auto;
+      }
+
+      .severity-options {
+
+        grid-template-columns:
+          repeat(3, 1fr);
+      }
+
+      .location-row {
+
+        grid-template-columns: 1fr;
+      }
+
+      .location-button {
+
+        width: 100%;
+      }
+
+      .report-footer {
+
+        flex-direction: column;
+
+        align-items: stretch;
+      }
+
+      .report-submit {
+
+        width: 100%;
+      }
+
+      .photo-empty {
+        padding: 22px 15px;
+        gap: 11px;
+      }
+
+      .upload-icon {
+        width: 42px;
+        height: 42px;
+        flex-basis: 42px;
+        border-radius: 12px;
+      }
+
+      .photo-upload-title {
+        font-size: 12px;
+      }
+
+      .photo-upload-help {
+        font-size: 9px;
+      }
+
+      .photo-preview {
+        grid-template-columns: 64px minmax(0, 1fr) 34px;
+        gap: 10px;
+      }
+
+      .photo-preview-image {
+        width: 64px;
+        height: 58px;
+      }
+    }
+
+
+    @media (max-width: 430px) {
+
+      .severity-options {
+
+        grid-template-columns: 1fr;
+      }
+
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="container nav">
+      <a class="brand" href="#"><span class="brand-mark"></span>RoadLens</a>
+      <nav class="nav-links" id="navLinks">
+        <a href="#how">How it works</a><a href="#features">Features</a><a href="#impact">Impact</a><a
+          href="#report">Report</a>
+      </nav>
+      <div class="nav-actions"><button class="btn btn-ghost" onclick="showToast('Sign in flow coming next')">Sign
+          in</button><button class="btn btn-primary" onclick="scrollToReport()">Report an issue <span>↗</span></button>
+      </div>
+      <button class="mobile-toggle" id="menuBtn" aria-label="Open menu">☰</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-grid">
+        <div>
+          <div class="eyebrow"><span class="dot"></span> Smart civic infrastructure</div>
+          <h1>See the road.<br><span>Shape the future.</span></h1>
+          <p class="hero-copy">RoadLens turns everyday road observations into actionable infrastructure intelligence —
+            helping communities report problems and cities prioritize what matters.</p>
+          <div class="hero-actions">
+            <button class="btn btn-primary" onclick="scrollToReport()">Report a road issue <span>→</span></button>
+            <a class="btn btn-ghost" href="#how">Explore RoadLens ↓</a>
+          </div>
+          <div class="trust">
+            <div class="avatars"><span class="avatar">A</span><span class="avatar">R</span><span
+                class="avatar">K</span><span class="avatar">+</span></div>
+            <span>Built for citizens, communities & city teams</span>
+          </div>
+        </div>
+        <div class="visual">
+          <div class="map-card">
+            <div class="map-bg"></div>
+            <div class="road one"></div>
+            <div class="road two"></div>
+            <div class="road three"></div>
+            <div class="map-pin pin1"></div>
+            <div class="map-pin pin2"></div>
+            <div class="map-pin pin3"></div>
+            <div class="map-label label1">Pothole · High priority</div>
+            <div class="map-label label2">Road damage</div>
+            <div class="map-label label3">Cracked surface</div>
+            <div class="map-ui"><span></span><span></span><span></span></div>
+          </div>
+          <div class="status-card">
+            <div class="status-top"><b>Live road pulse</b><span class="live">● LIVE</span></div>
+            <div class="issue"><i></i><span>3 potholes detected nearby</span></div>
+            <div class="issue"><i></i><span>Road repair · 82% complete</span></div>
+            <div class="issue"><i></i><span>New report · 4 min ago</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="stats" id="impact">
+      <div class="container stat-grid">
+        <div class="stat"><strong data-count="12840">0</strong><span>Issues reported</span></div>
+        <div class="stat"><strong data-count="9340">0</strong><span>Issues resolved</span></div>
+        <div class="stat"><strong data-count="78">0%</strong><span>Resolution rate</span></div>
+        <div class="stat"><strong data-count="42">0</strong><span>Active zones</span></div>
+      </div>
+    </section>
+
+    <section class="section" id="features">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <div class="section-kicker">One platform</div>
+            <h2>From road sighting<br>to city action.</h2>
+          </div>
+          <p>Everything needed to make road reporting easier, more transparent, and more useful — from the first photo
+            to the final resolution.</p>
+        </div>
+        <div class="feature-grid">
+          <article class="feature reveal"><span class="feature-number">01</span>
+            <div class="feature-icon">⌖</div>
+            <h3>Report in seconds</h3>
+            <p>Capture a road issue, add its location and submit a clear report without complicated forms.</p>
+          </article>
+          <article class="feature reveal"><span class="feature-number">02</span>
+            <div class="feature-icon">◈</div>
+            <h3>Smart prioritization</h3>
+            <p>Turn reports into useful signals using severity, location and community activity to surface urgent
+              problems.</p>
+          </article>
+          <article class="feature reveal"><span class="feature-number">03</span>
+            <div class="feature-icon">↗</div>
+            <h3>Track the outcome</h3>
+            <p>Follow issue status from submitted and verified through in-progress, resolved and closed.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section report" id="how">
+      <div class="container report-grid">
+        <div class="reveal">
+          <div class="section-kicker">How it works</div>
+          <h2>Make every<br>report count.</h2>
+          <div class="steps">
+            <div class="step"><span class="step-num">01</span>
+              <div>
+                <h4>Spot an issue</h4>
+                <p>Find a pothole, damaged surface, broken sign or other road problem.</p>
+              </div>
+            </div>
+            <div class="step"><span class="step-num">02</span>
+              <div>
+                <h4>Capture & locate</h4>
+                <p>Add a photo and location so the problem can be understood quickly.</p>
+              </div>
+            </div>
+            <div class="step"><span class="step-num">03</span>
+              <div>
+                <h4>Submit & track</h4>
+                <p>Send the report and follow its progress as action is taken.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="phone reveal" id="report">
+          <div class="phone-screen">
+            <div class="phone-head"><span class="mini-brand">New report</span><span class="mini-avatar"></span></div>
+            <div class="camera">
+              <div class="scan"></div>
+              <div class="camera-tip">PHOTO PREVIEW · ROAD DAMAGE</div>
+            </div>
+            <div class="input-mock">Pothole on Sayajigunj Road</div>
+            <div class="input-mock">📍 Current location detected</div>
+            <div class="send-mock" onclick="submitReport()">Submit road report →</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta">
+      <div class="container">
+        <div class="cta-box reveal">
+          <div>
+            <div class="section-kicker" style="color:#cbe89e">RoadLens</div>
+            <h2>Better roads start with better visibility.</h2>
+            <p>Help turn local observations into a clearer picture of road conditions.</p>
+          </div>
+          <button class="btn btn-lime" onclick="scrollToReport()">Report an issue ↗</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-row">
+      <div class="brand"><span class="brand-mark"></span>RoadLens</div>
+      <div>© 2026 RoadLens. Built for smarter streets.</div>
+      <div class="footer-links"><a href="#features">Features</a><a href="#how">How it works</a></div>
+    </div>
+  </footer>
+  <!-- =========================================
+     ROADLENS REPORT ISSUE MODAL
+========================================= -->
+
+  <div class="report-modal" id="reportModal">
+
+    <div class="report-backdrop" id="reportBackdrop"></div>
+
+    <div class="report-dialog">
+
+      <!-- Close -->
+      <button class="report-close" id="closeReport" type="button" aria-label="Close report form">
+        ×
+      </button>
+
+
+      <!-- Header -->
+      <div class="report-dialog-head">
+
+        <div>
+
+          <div class="report-eyebrow">
+            <span></span>
+            ROADLENS REPORT
+          </div>
+
+          <h2>
+            Report a road issue
+          </h2>
+
+          <p>
+            Help improve your streets by reporting
+            a problem you notice.
+          </p>
+
+        </div>
+
+        <div class="report-step">
+          <strong>01</strong>
+          <span>/ 01</span>
+        </div>
+
+      </div>
+
+
+      <!-- =================================
+             REPORT FORM
+        ================================== -->
+
+      <form id="reportForm">
+
+        <div class="report-form-grid">
+
+
+          <!-- Issue Type -->
+          <div class="report-field">
+
+            <label for="issueType">
+              Issue type
+              <span class="required">*</span>
+            </label>
+
+            <div class="report-select">
+
+              <select id="issueType" required>
+
+                <option value="">
+                  Select issue type
+                </option>
+
+                <option value="pothole">
+                  Pothole
+                </option>
+
+                <option value="cracked-road">
+                  Cracked road
+                </option>
+
+                <option value="damaged-road">
+                  Damaged road surface
+                </option>
+
+                <option value="waterlogging">
+                  Waterlogging
+                </option>
+
+                <option value="streetlight">
+                  Broken streetlight
+                </option>
+
+                <option value="sign">
+                  Missing / damaged sign
+                </option>
+
+                <option value="other">
+                  Other
+                </option>
+
+              </select>
+
+            </div>
+
+            <small class="report-error">
+            </small>
+
+          </div>
+
+
+          <!-- Severity -->
+          <div class="report-field">
+
+            <label>
+              Severity
+              <span class="required">*</span>
+            </label>
+
+            <div class="severity-options">
+
+              <label class="severity-card">
+
+                <input type="radio" name="severity" value="Low">
+
+                <span class="severity-content">
+
+                  <strong>Low</strong>
+
+                  <small>
+                    Minor issue
+                  </small>
+
+                </span>
+
+              </label>
+
+
+              <label class="severity-card">
+
+                <input type="radio" name="severity" value="Medium">
+
+                <span class="severity-content">
+
+                  <strong>Medium</strong>
+
+                  <small>
+                    Needs attention
+                  </small>
+
+                </span>
+
+              </label>
+
+
+              <label class="severity-card">
+
+                <input type="radio" name="severity" value="High">
+
+                <span class="severity-content">
+
+                  <strong>High</strong>
+
+                  <small>
+                    Safety risk
+                  </small>
+
+                </span>
+
+              </label>
+
+            </div>
+
+          </div>
+
+
+          <!-- Photo -->
+          <!-- Photo -->
+          <div class="report-field full">
+
+            <label>
+              Photo
+              <span class="optional">
+                (recommended)
+              </span>
+            </label>
+
+            <div class="photo-upload" id="photoUpload">
+
+              <input type="file" id="roadPhoto" accept="image/png,image/jpeg,image/webp" hidden>
+
+              <!-- Empty upload state -->
+              <div class="photo-empty" id="photoEmpty">
+
+                <div class="upload-icon">
+                  ↑
+                </div>
+
+                <div class="photo-upload-content">
+
+                  <div class="photo-upload-title">
+                    Drop a photo here or
+                    <button type="button" class="photo-browse" id="photoBrowse">
+                      browse
+                    </button>
+                  </div>
+
+                  <div class="photo-upload-help">
+                    JPG, PNG or WEBP · Maximum 5 MB
+                  </div>
+
+                </div>
+
+              </div>
+
+
+              <!-- Selected photo -->
+              <div class="photo-preview" id="photoPreview" hidden>
+
+                <div class="photo-preview-image">
+                  <img id="photoPreviewImage" src="" alt="Selected road issue">
+                </div>
+
+                <div class="photo-details">
+
+                  <strong id="photoName">
+                  </strong>
+
+                  <small id="photoSize">
+                  </small>
+
+                </div>
+
+                <button type="button" id="removePhoto" class="photo-remove" aria-label="Remove photo">
+                  ×
+                </button>
+
+              </div>
+
+            </div>
+
+            <small class="photo-error" id="photoError"></small>
+
+          </div>
+
+
+          <!-- Location -->
+          <div class="report-field full">
+
+            <label for="roadLocation">
+
+              Location
+
+              <span class="required">
+                *
+              </span>
+
+            </label>
+
+
+            <div class="location-row">
+
+              <div class="location-input">
+
+                <span>⌖</span>
+
+                <input type="text" id="roadLocation" placeholder="Search road, area or landmark" required>
+
+              </div>
+
+
+              <button type="button" class="location-button" id="currentLocation">
+
+                Use current location
+
+              </button>
+
+            </div>
+
+            <small class="report-error">
+            </small>
+
+          </div>
+
+
+          <!-- Description -->
+          <div class="report-field full">
+
+            <label for="roadDescription">
+              Description
+            </label>
+
+
+            <textarea id="roadDescription" maxlength="300" rows="4"
+              placeholder="Briefly describe the issue, its location or anything drivers should know..."></textarea>
+
+
+            <div class="character-counter">
+
+              <span id="descriptionCount">
+                0
+              </span>
+
+              / 300
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- Footer -->
+        <div class="report-footer">
+
+          <div class="report-note">
+
+            <span>✓</span>
+
+            Your report helps build a clearer
+            picture of local road conditions.
+
+          </div>
+
+
+          <button type="submit" class="btn btn-primary report-submit">
+
+            <span id="reportSubmitText">
+              Submit report
+            </span>
+
+            <span>→</span>
+
+          </button>
+
+        </div>
+
+      </form>
+
+
+      <!-- =================================
+             SUCCESS STATE
+        ================================== -->
+
+      <div class="report-success" id="reportSuccess" hidden>
+
+        <div class="success-icon">
+          ✓
+        </div>
+
+        <div class="report-eyebrow">
+          REPORT RECEIVED
+        </div>
+
+        <h2>
+          Thanks for making roads better.
+        </h2>
+
+        <p>
+          Your report has been recorded
+          and is ready for review.
+        </p>
+
+
+        <div class="report-id">
+
+          <span>
+            Report ID
+          </span>
+
+          <strong id="generatedReportId">
+            RL-2026-00000
+          </strong>
+
+          <button type="button" id="copyReportId">
+
+            Copy
+
+          </button>
+
+        </div>
+
+
+        <button class="btn btn-primary" id="finishReport" type="button">
+
+          Done
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+  <div class="toast" id="toast"></div>
+  <script src="script.js"></script>
+
+</body>
+
+</html>
