@@ -15,18 +15,7 @@ document.querySelectorAll(".nav-links a").forEach(link => {
 });
 
 function scrollToReport() {
-
-  if (!reportModal) return;
-
-  reportModal.classList.add("open");
-
-  reportModal.setAttribute(
-    "aria-hidden",
-    "false"
-  );
-
-  document.body.style.overflow = "hidden";
-
+  openReportForm();
 }
 
 function showToast(message) {
@@ -130,6 +119,27 @@ function openReportForm() {
 }
 
 
+/* =========================================
+   OPEN REPORT FORM FROM MY REPORTS
+========================================= */
+
+const reportParams =
+  new URLSearchParams(window.location.search);
+
+if (
+  reportParams.get("openReport") === "1"
+) {
+
+  openReportForm();
+
+  // Remove query parameter from URL
+  window.history.replaceState(
+    {},
+    document.title,
+    window.location.pathname
+  );
+
+}
 
 /* =========================================
    CLOSE REPORT FORM
