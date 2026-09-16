@@ -1,0 +1,3800 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>RoadLens — Admin Panel</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* =====================================================
+           ROADLENS ADMIN
+        ===================================================== */
+
+        :root {
+            --bg: #f5f7f4;
+            --surface: #ffffff;
+            --surface-soft: #f8faf8;
+
+            --text: #172019;
+            --muted: #718077;
+
+            --line: #e3e9e4;
+
+            --green: #237a4b;
+            --green-dark: #175c38;
+            --green-soft: #e8f4ed;
+
+            --orange: #c47a20;
+            --orange-soft: #fff3df;
+
+            --red: #c94b4b;
+            --red-soft: #fdecec;
+
+            --blue: #3c70a8;
+            --blue-soft: #eaf2fb;
+
+            --shadow-sm:
+                0 2px 8px rgba(23, 32, 25, 0.04);
+
+            --shadow:
+                0 12px 35px rgba(23, 32, 25, 0.07);
+
+            --radius: 18px;
+            --sidebar-width: 250px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: "DM Sans", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        button,
+        input,
+        select {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        /* =====================================================
+           LAYOUT
+        ===================================================== */
+
+        .admin-layout {
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* =====================================================
+           SIDEBAR
+        ===================================================== */
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+
+            width: var(--sidebar-width);
+
+            background: #ffffff;
+            border-right: 1px solid var(--line);
+
+            padding: 24px 16px;
+
+            display: flex;
+            flex-direction: column;
+
+            z-index: 100;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+
+            padding: 5px 10px 30px;
+        }
+
+        .brand-icon {
+            width: 38px;
+            height: 38px;
+
+            border-radius: 11px;
+
+            display: grid;
+            place-items: center;
+
+            background: var(--green);
+            color: white;
+
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .brand-name {
+            font-family: "Manrope", sans-serif;
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .admin-label {
+            font-size: 10px;
+            color: var(--muted);
+            letter-spacing: 1.4px;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        .nav-title {
+            font-size: 10px;
+            color: #9aa59e;
+            text-transform: uppercase;
+            letter-spacing: 1.3px;
+
+            padding: 0 12px;
+            margin-bottom: 9px;
+        }
+
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .nav-item {
+            width: 100%;
+
+            border: 0;
+            background: transparent;
+
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            padding: 12px 13px;
+
+            border-radius: 12px;
+
+            color: #657169;
+
+            font-size: 14px;
+            font-weight: 600;
+
+            text-align: left;
+
+            transition: 0.2s ease;
+        }
+
+        .nav-item:hover {
+            background: var(--surface-soft);
+            color: var(--text);
+        }
+
+        .nav-item.active {
+            background: var(--green-soft);
+            color: var(--green-dark);
+        }
+
+        .nav-icon {
+            width: 20px;
+            text-align: center;
+            font-size: 17px;
+        }
+
+        .sidebar-bottom {
+            margin-top: auto;
+        }
+
+        .admin-profile {
+            border-top: 1px solid var(--line);
+            padding: 18px 8px 5px;
+
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar {
+            width: 38px;
+            height: 38px;
+
+            border-radius: 50%;
+
+            background: var(--green-soft);
+            color: var(--green-dark);
+
+            display: grid;
+            place-items: center;
+
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .admin-info {
+            min-width: 0;
+        }
+
+        .admin-info strong {
+            display: block;
+            font-size: 13px;
+        }
+
+        .admin-info span {
+            display: block;
+            color: var(--muted);
+            font-size: 11px;
+            margin-top: 2px;
+        }
+
+        /* =====================================================
+           MAIN
+        ===================================================== */
+
+        .main {
+            margin-left: var(--sidebar-width);
+            width: calc(100% - var(--sidebar-width));
+            min-height: 100vh;
+        }
+
+        .topbar {
+            height: 76px;
+
+            padding: 0 32px;
+
+            background: rgba(245, 247, 244, 0.88);
+            backdrop-filter: blur(14px);
+
+            border-bottom: 1px solid var(--line);
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .mobile-menu {
+            display: none;
+
+            border: 0;
+            background: white;
+
+            width: 40px;
+            height: 40px;
+
+            border-radius: 10px;
+        }
+
+        .page-location {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .page-location small {
+            color: var(--muted);
+            font-size: 11px;
+            margin-bottom: 2px;
+        }
+
+        .page-location strong {
+            font-family: "Manrope", sans-serif;
+            font-size: 17px;
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .icon-button {
+            width: 40px;
+            height: 40px;
+
+            border: 1px solid var(--line);
+            background: white;
+
+            border-radius: 11px;
+
+            position: relative;
+        }
+
+        .notification-dot {
+            position: absolute;
+
+            width: 7px;
+            height: 7px;
+
+            border-radius: 50%;
+
+            background: var(--red);
+
+            top: 8px;
+            right: 8px;
+
+            border: 2px solid white;
+        }
+
+        /* =====================================================
+           CONTENT
+        ===================================================== */
+
+        .content {
+            padding: 32px;
+            max-width: 1600px;
+        }
+
+        .view {
+            display: none;
+            animation: viewIn 0.25s ease;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        @keyframes viewIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .page-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+
+            margin-bottom: 25px;
+        }
+
+        .page-heading h1 {
+            font-family: "Manrope", sans-serif;
+            font-size: 28px;
+            letter-spacing: -1px;
+        }
+
+        .page-heading p {
+            color: var(--muted);
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
+        /* =====================================================
+           BUTTONS
+        ===================================================== */
+
+        .btn {
+            border: 0;
+
+            padding: 11px 16px;
+
+            border-radius: 11px;
+
+            font-size: 13px;
+            font-weight: 700;
+
+            transition: 0.2s ease;
+        }
+
+        .btn-primary {
+            background: var(--green);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--green-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--text);
+            border: 1px solid var(--line);
+        }
+
+        .btn-secondary:hover {
+            background: var(--surface-soft);
+        }
+
+        /* =====================================================
+           STAT CARDS
+        ===================================================== */
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: var(--surface);
+
+            border: 1px solid var(--line);
+
+            border-radius: var(--radius);
+
+            padding: 21px;
+
+            box-shadow: var(--shadow-sm);
+
+            transition: 0.25s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+        }
+
+        .stat-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .stat-title {
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .stat-icon {
+            width: 35px;
+            height: 35px;
+
+            border-radius: 10px;
+
+            display: grid;
+            place-items: center;
+
+            background: var(--green-soft);
+            color: var(--green);
+        }
+
+        .stat-value {
+            font-family: "Manrope", sans-serif;
+            font-size: 27px;
+            font-weight: 800;
+
+            margin-top: 14px;
+        }
+
+        .stat-change {
+            font-size: 11px;
+            margin-top: 5px;
+            color: var(--green);
+            font-weight: 600;
+        }
+
+        /* =====================================================
+           CARDS
+        ===================================================== */
+
+        .card {
+            background: var(--surface);
+
+            border: 1px solid var(--line);
+
+            border-radius: var(--radius);
+
+            box-shadow: var(--shadow-sm);
+
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 19px 21px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            border-bottom: 1px solid var(--line);
+        }
+
+        .card-header h2 {
+            font-family: "Manrope", sans-serif;
+            font-size: 15px;
+        }
+
+        .card-header span {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .card-body {
+            padding: 21px;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1.55fr 1fr;
+            gap: 18px;
+        }
+
+        /* =====================================================
+           MINI CHART
+        ===================================================== */
+
+        .chart {
+            height: 245px;
+
+            display: flex;
+            align-items: flex-end;
+            gap: 14px;
+
+            padding: 15px 5px 5px;
+        }
+
+        .bar-wrapper {
+            height: 100%;
+
+            flex: 1;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .bar {
+            width: 100%;
+            max-width: 32px;
+
+            background: var(--green);
+
+            border-radius: 7px 7px 3px 3px;
+
+            transition: height 0.8s ease;
+        }
+
+        .bar-label {
+            font-size: 10px;
+            color: var(--muted);
+        }
+
+        /* =====================================================
+           REPORT LIST
+        ===================================================== */
+
+        .report-list {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .report-item {
+            display: flex;
+            gap: 12px;
+
+            padding: 15px 0;
+
+            border-bottom: 1px solid var(--line);
+        }
+
+        .report-item:last-child {
+            border-bottom: 0;
+        }
+
+        .report-thumb {
+            width: 54px;
+            height: 54px;
+
+            border-radius: 11px;
+
+            background:
+                linear-gradient(135deg,
+                    #dce7df,
+                    #b9cabe);
+
+            display: grid;
+            place-items: center;
+
+            flex-shrink: 0;
+        }
+
+        .report-info {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .report-info strong {
+            display: block;
+            font-size: 13px;
+        }
+
+        .report-info p {
+            color: var(--muted);
+            font-size: 11px;
+            margin-top: 4px;
+        }
+
+        /* =====================================================
+           STATUS
+        ===================================================== */
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+
+            padding: 5px 9px;
+
+            border-radius: 30px;
+
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .status::before {
+            content: "";
+
+            width: 5px;
+            height: 5px;
+
+            border-radius: 50%;
+        }
+
+        .status.pending {
+            background: var(--orange-soft);
+            color: var(--orange);
+        }
+
+        .status.pending::before {
+            background: var(--orange);
+        }
+
+        .status.progress {
+            background: var(--blue-soft);
+            color: var(--blue);
+        }
+
+        .status.progress::before {
+            background: var(--blue);
+        }
+
+        .status.resolved {
+            background: var(--green-soft);
+            color: var(--green);
+        }
+
+        .status.resolved::before {
+            background: var(--green);
+        }
+
+        /* =====================================================
+           REPORTS TABLE
+        ===================================================== */
+
+        .toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 12px;
+
+            margin-bottom: 16px;
+        }
+
+        .search-box {
+            position: relative;
+            flex: 1;
+            max-width: 380px;
+        }
+
+        .search-box input {
+            width: 100%;
+
+            height: 43px;
+
+            border: 1px solid var(--line);
+            border-radius: 11px;
+
+            padding: 0 14px 0 38px;
+
+            outline: none;
+
+            background: white;
+
+            font-size: 12px;
+        }
+
+        .search-box input:focus {
+            border-color: #9bbba7;
+            box-shadow: 0 0 0 3px var(--green-soft);
+        }
+
+        .search-symbol {
+            position: absolute;
+            left: 14px;
+            top: 12px;
+            color: var(--muted);
+        }
+
+        .filters {
+            display: flex;
+            gap: 8px;
+        }
+
+        .filters select {
+            height: 43px;
+
+            padding: 0 12px;
+
+            border: 1px solid var(--line);
+            border-radius: 11px;
+
+            background: white;
+
+            color: var(--text);
+
+            outline: none;
+
+            font-size: 12px;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 850px;
+        }
+
+        th {
+            text-align: left;
+
+            padding: 13px 18px;
+
+            color: #8a958e;
+
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+
+            background: var(--surface-soft);
+
+            border-bottom: 1px solid var(--line);
+        }
+
+        td {
+            padding: 15px 18px;
+
+            border-bottom: 1px solid var(--line);
+
+            font-size: 12px;
+
+            vertical-align: middle;
+        }
+
+        tr:last-child td {
+            border-bottom: 0;
+        }
+
+        .issue-cell {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+        }
+
+        .issue-image {
+            width: 40px;
+            height: 40px;
+
+            border-radius: 9px;
+
+            background: #dce5de;
+
+            display: grid;
+            place-items: center;
+        }
+
+        .issue-name strong {
+            display: block;
+            font-size: 12px;
+        }
+
+        .issue-name span {
+            display: block;
+            color: var(--muted);
+            font-size: 10px;
+            margin-top: 2px;
+        }
+
+        .action-btn {
+            border: 0;
+            background: transparent;
+
+            color: var(--green);
+
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        /* =====================================================
+           ANALYTICS
+        ===================================================== */
+
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 18px;
+        }
+
+        .big-chart {
+            height: 300px;
+
+            display: flex;
+            align-items: flex-end;
+
+            gap: 12px;
+
+            padding-top: 20px;
+        }
+
+        .big-bar-wrap {
+            flex: 1;
+            height: 100%;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: center;
+
+            gap: 8px;
+        }
+
+        .big-bar {
+            width: 100%;
+            max-width: 44px;
+
+            background: var(--green);
+
+            border-radius: 8px 8px 3px 3px;
+
+            min-height: 8px;
+        }
+
+        .big-bar-wrap span {
+            font-size: 10px;
+            color: var(--muted);
+        }
+
+        .distribution {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .distribution-row {
+            display: grid;
+            grid-template-columns: 100px 1fr 40px;
+            align-items: center;
+            gap: 10px;
+
+            font-size: 11px;
+        }
+
+        .progress-track {
+            height: 7px;
+
+            background: #edf1ee;
+
+            border-radius: 20px;
+
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+
+            background: var(--green);
+
+            border-radius: inherit;
+        }
+
+        /* =====================================================
+           USERS
+        ===================================================== */
+
+        .user-avatar {
+            width: 34px;
+            height: 34px;
+
+            border-radius: 50%;
+
+            background: var(--green-soft);
+            color: var(--green-dark);
+
+            display: grid;
+            place-items: center;
+
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .user-cell {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* =====================================================
+           SETTINGS
+        ===================================================== */
+
+        .settings-layout {
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            gap: 18px;
+        }
+
+        .settings-nav {
+            background: white;
+
+            border: 1px solid var(--line);
+
+            border-radius: var(--radius);
+
+            padding: 8px;
+        }
+
+        .settings-tab {
+            width: 100%;
+
+            border: 0;
+            background: transparent;
+
+            text-align: left;
+
+            padding: 11px 12px;
+
+            border-radius: 10px;
+
+            font-size: 12px;
+            font-weight: 600;
+
+            color: var(--muted);
+
+            margin-bottom: 3px;
+        }
+
+        .settings-tab:hover {
+            background: var(--surface-soft);
+        }
+
+        .settings-tab.active {
+            background: var(--green-soft);
+            color: var(--green-dark);
+        }
+
+        .settings-content {
+            background: white;
+
+            border: 1px solid var(--line);
+
+            border-radius: var(--radius);
+
+            padding: 25px;
+        }
+
+        .settings-section {
+            display: none;
+        }
+
+        .settings-section.active {
+            display: block;
+        }
+
+        .settings-title {
+            font-family: "Manrope", sans-serif;
+            font-size: 17px;
+            margin-bottom: 5px;
+        }
+
+        .settings-description {
+            color: var(--muted);
+            font-size: 12px;
+            margin-bottom: 25px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 17px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+
+            height: 43px;
+
+            border: 1px solid var(--line);
+
+            border-radius: 10px;
+
+            padding: 0 12px;
+
+            outline: none;
+
+            background: #fbfcfb;
+
+            font-size: 12px;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #9bbba7;
+
+            box-shadow:
+                0 0 0 3px var(--green-soft);
+        }
+
+        .settings-footer {
+            margin-top: 25px;
+
+            padding-top: 20px;
+
+            border-top: 1px solid var(--line);
+
+            display: flex;
+            justify-content: flex-end;
+            gap: 9px;
+        }
+
+        .toggle-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 15px 0;
+
+            border-bottom: 1px solid var(--line);
+        }
+
+        .toggle-row:last-child {
+            border-bottom: 0;
+        }
+
+        .toggle-info strong {
+            display: block;
+            font-size: 12px;
+        }
+
+        .toggle-info span {
+            display: block;
+            color: var(--muted);
+            font-size: 10px;
+            margin-top: 3px;
+        }
+
+        .toggle {
+            width: 42px;
+            height: 23px;
+
+            border-radius: 30px;
+
+            background: #d9dfda;
+
+            border: 0;
+
+            padding: 3px;
+
+            transition: 0.2s;
+        }
+
+        .toggle::after {
+            content: "";
+
+            display: block;
+
+            width: 17px;
+            height: 17px;
+
+            background: white;
+
+            border-radius: 50%;
+
+            transition: 0.2s;
+        }
+
+        .toggle.active {
+            background: var(--green);
+        }
+
+        .toggle.active::after {
+            transform: translateX(19px);
+        }
+
+        /* =====================================================
+           MODAL
+        ===================================================== */
+
+        .modal-overlay {
+            position: fixed;
+
+            inset: 0;
+
+            background: rgba(17, 25, 20, 0.38);
+
+            backdrop-filter: blur(5px);
+
+            display: none;
+
+            align-items: center;
+            justify-content: center;
+
+            z-index: 500;
+
+            padding: 20px;
+        }
+
+        .modal-overlay.open {
+            display: flex;
+        }
+
+        .modal {
+            width: min(600px, 100%);
+
+            max-height: 90vh;
+
+            overflow-y: auto;
+
+            background: white;
+
+            border-radius: 20px;
+
+            box-shadow:
+                0 30px 80px rgba(0, 0, 0, .16);
+
+            animation: modalIn .25s ease;
+        }
+
+        @keyframes modalIn {
+            from {
+                opacity: 0;
+                transform: translateY(15px) scale(.98);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal-header {
+            padding: 20px;
+
+            border-bottom: 1px solid var(--line);
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-header h2 {
+            font-family: "Manrope", sans-serif;
+            font-size: 17px;
+        }
+
+        .close-modal {
+            width: 34px;
+            height: 34px;
+
+            border: 0;
+
+            background: var(--surface-soft);
+
+            border-radius: 9px;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+
+            gap: 15px;
+        }
+
+        .detail {
+            padding: 13px;
+
+            background: var(--surface-soft);
+
+            border-radius: 11px;
+        }
+
+        .detail small {
+            display: block;
+
+            color: var(--muted);
+
+            font-size: 9px;
+            text-transform: uppercase;
+
+            letter-spacing: .6px;
+        }
+
+        .detail strong {
+            display: block;
+
+            font-size: 12px;
+
+            margin-top: 5px;
+        }
+
+        .modal-footer {
+            padding: 16px 20px;
+
+            border-top: 1px solid var(--line);
+
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        /* =====================================================
+           TOAST
+        ===================================================== */
+
+        .toast {
+            position: fixed;
+
+            right: 25px;
+            bottom: 25px;
+
+            background: #172019;
+            color: white;
+
+            padding: 13px 17px;
+
+            border-radius: 11px;
+
+            font-size: 12px;
+            font-weight: 600;
+
+            opacity: 0;
+
+            transform: translateY(15px);
+
+            pointer-events: none;
+
+            transition: .25s ease;
+
+            z-index: 1000;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* =====================================================
+           MOBILE
+        ===================================================== */
+
+        @media (max-width: 1050px) {
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .dashboard-grid,
+            .analytics-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .settings-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .settings-nav {
+                display: flex;
+                overflow-x: auto;
+            }
+
+            .settings-tab {
+                white-space: nowrap;
+            }
+        }
+
+        @media (max-width: 760px) {
+
+            :root {
+                --sidebar-width: 0px;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+                transition: .25s ease;
+                width: 250px;
+                box-shadow: var(--shadow);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .topbar {
+                padding: 0 18px;
+            }
+
+            .mobile-menu {
+                display: block;
+            }
+
+            .content {
+                padding: 22px 17px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-heading {
+                align-items: flex-start;
+                gap: 15px;
+                flex-direction: column;
+            }
+
+            .toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-box {
+                max-width: none;
+            }
+
+            .filters {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .form-grid,
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full {
+                grid-column: auto;
+            }
+        }
+    </style>
+</head>
+
+
+<body>
+
+    <div class="admin-layout">
+
+        <!-- =====================================================
+         SIDEBAR
+    ====================================================== -->
+
+        <aside class="sidebar" id="sidebar">
+
+            <div class="brand">
+
+                <div class="brand-icon">
+                    R
+                </div>
+
+                <div>
+                    <div class="brand-name">RoadLens</div>
+                    <div class="admin-label">Administration</div>
+                </div>
+
+            </div>
+
+
+            <div class="nav-title">
+                Workspace
+            </div>
+
+
+            <nav class="sidebar-nav">
+
+                <button class="nav-item active" data-view="dashboard">
+                    <span class="nav-icon">⌂</span>
+                    Dashboard
+                </button>
+
+                <button class="nav-item" data-view="reports">
+                    <span class="nav-icon">▤</span>
+                    Reports
+                </button>
+
+                <button class="nav-item" data-view="analytics">
+                    <span class="nav-icon">◒</span>
+                    Analytics
+                </button>
+
+                <button class="nav-item" data-view="users">
+                    <span class="nav-icon">♙</span>
+                    Users
+                </button>
+
+            </nav>
+
+
+            <div class="nav-title" style="margin-top:28px;">
+                System
+            </div>
+
+
+            <nav class="sidebar-nav">
+
+                <button class="nav-item" data-view="settings">
+                    <span class="nav-icon">⚙</span>
+                    Settings
+                </button>
+
+            </nav>
+
+
+            <div class="sidebar-bottom">
+
+                <div class="admin-profile">
+
+                    <div class="avatar">
+                        AD
+                    </div>
+
+                    <div class="admin-info">
+                        <strong>Administrator</strong>
+                        <span>RoadLens Admin</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </aside>
+
+
+        <!-- =====================================================
+         MAIN
+    ====================================================== -->
+
+        <main class="main">
+
+            <!-- TOP BAR -->
+
+            <header class="topbar">
+
+                <div style="display:flex;align-items:center;gap:12px;">
+
+                    <button class="mobile-menu" id="mobileMenu">
+                        ☰
+                    </button>
+
+                    <div class="page-location">
+
+                        <small>RoadLens / Admin</small>
+
+                        <strong id="pageTitle">
+                            Dashboard
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="top-actions">
+
+                    <button class="icon-button" onclick="showToast('No new notifications')">
+                        ♧
+                        <span class="notification-dot"></span>
+                    </button>
+
+                </div>
+
+            </header>
+
+
+            <div class="content">
+
+
+                <!-- =================================================
+                 DASHBOARD
+            ================================================== -->
+
+                <section class="view active" id="dashboard">
+
+                    <div class="page-heading">
+
+                        <div>
+                            <h1>Dashboard</h1>
+                            <p>Overview of RoadLens civic infrastructure activity.</p>
+                        </div>
+
+                        <button class="btn btn-primary" onclick="switchView('reports')">
+                            Manage Reports →
+                        </button>
+
+                    </div>
+
+
+                    <div class="stats-grid">
+
+                        <div class="stat-card">
+
+                            <div class="stat-top">
+
+                                <span class="stat-title">
+                                    Total Reports
+                                </span>
+
+                                <div class="stat-icon">
+                                    ▤
+                                </div>
+
+                            </div>
+
+                            <div class="stat-value" data-number="1248">
+                                0
+                            </div>
+
+                            <div class="stat-change">
+                                +12.4% this month
+                            </div>
+
+                        </div>
+
+
+                        <div class="stat-card">
+
+                            <div class="stat-top">
+
+                                <span class="stat-title">
+                                    Pending Review
+                                </span>
+
+                                <div class="stat-icon">
+                                    ◷
+                                </div>
+
+                            </div>
+
+                            <div class="stat-value" data-number="284">
+                                0
+                            </div>
+
+                            <div class="stat-change">
+                                Requires attention
+                            </div>
+
+                        </div>
+
+
+                        <div class="stat-card">
+
+                            <div class="stat-top">
+
+                                <span class="stat-title">
+                                    Resolved
+                                </span>
+
+                                <div class="stat-icon">
+                                    ✓
+                                </div>
+
+                            </div>
+
+                            <div class="stat-value" data-number="792">
+                                0
+                            </div>
+
+                            <div class="stat-change">
+                                63.4% resolution rate
+                            </div>
+
+                        </div>
+
+
+                        <div class="stat-card">
+
+                            <div class="stat-top">
+
+                                <span class="stat-title">
+                                    Registered Users
+                                </span>
+
+                                <div class="stat-icon">
+                                    ♙
+                                </div>
+
+                            </div>
+
+                            <div class="stat-value" data-number="2431">
+                                0
+                            </div>
+
+                            <div class="stat-change">
+                                +84 this month
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="dashboard-grid">
+
+
+                        <!-- REPORT CHART -->
+
+                        <div class="card">
+
+                            <div class="card-header">
+
+                                <h2>Reports Overview</h2>
+
+                                <span>Last 7 months</span>
+
+                            </div>
+
+                            <div class="card-body">
+
+                                <div class="chart">
+
+                                    <div class="bar-wrapper">
+                                        <div class="bar" style="height:42%;"></div>
+                                        <span class="bar-label">Apr</span>
+                                    </div>
+
+                                    <div class="bar-wrapper">
+                                        <div class="bar" style="height:55%;"></div>
+                                        <span class="bar-label">May</span>
+                                    </div>
+
+                                    <div class="bar-wrapper">
+                                        <div class="bar" style="height:48%;"></div>
+                                        <span class="bar-label">Jun</span>
+                                    </div>
+
+                                    <div class="bar-wrapper">
+                                        <div class="bar" style="height:68%;"></div>
+                                        <span class="bar-label">Jul</span>
+                                    </div>
+
+                                    <div class="bar-wrapper">
+                                        <div class="bar" style="height:61%;"></div>
+                                        <span class="bar-label">Aug</span>
+                                    </div>
+
+                                    <div class="bar-wrapper">
+                                        <div class="bar" style="height:80%;"></div>
+                                        <span class="bar-label">Sep</span>
+                                    </div>
+
+                                    <div class="bar-wrapper">
+                                        <div class="bar" style="height:93%;"></div>
+                                        <span class="bar-label">Oct</span>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- RECENT REPORTS -->
+
+                        <div class="card">
+
+                            <div class="card-header">
+
+                                <h2>Recent Reports</h2>
+
+                                <button class="action-btn" onclick="switchView('reports')">
+                                    View all
+                                </button>
+
+                            </div>
+
+                            <div class="card-body">
+
+                                <div class="report-list">
+
+                                    <div class="report-item">
+
+                                        <div class="report-thumb">
+                                            ◉
+                                        </div>
+
+                                        <div class="report-info">
+
+                                            <strong>
+                                                Large Pothole
+                                            </strong>
+
+                                            <p>
+                                                Vasad Main Road · 12 min ago
+                                            </p>
+
+                                        </div>
+
+                                        <span class="status pending">
+                                            Pending
+                                        </span>
+
+                                    </div>
+
+
+                                    <div class="report-item">
+
+                                        <div class="report-thumb">
+                                            ◉
+                                        </div>
+
+                                        <div class="report-info">
+
+                                            <strong>
+                                                Road Crack
+                                            </strong>
+
+                                            <p>
+                                                Station Road · 42 min ago
+                                            </p>
+
+                                        </div>
+
+                                        <span class="status progress">
+                                            In Progress
+                                        </span>
+
+                                    </div>
+
+
+                                    <div class="report-item">
+
+                                        <div class="report-thumb">
+                                            ◉
+                                        </div>
+
+                                        <div class="report-info">
+
+                                            <strong>
+                                                Damaged Surface
+                                            </strong>
+
+                                            <p>
+                                                College Road · 1 hr ago
+                                            </p>
+
+                                        </div>
+
+                                        <span class="status resolved">
+                                            Resolved
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                 REPORTS
+            ================================================== -->
+
+                <section class="view" id="reports">
+
+                    <div class="page-heading">
+
+                        <div>
+                            <h1>Reports</h1>
+                            <p>Review and manage reported road infrastructure issues.</p>
+                        </div>
+
+                        <button class="btn btn-primary"
+                            onclick="showToast('Export feature ready for backend integration')">
+                            Export Reports
+                        </button>
+
+                    </div>
+
+
+                    <div class="toolbar">
+
+                        <div class="search-box">
+
+                            <span class="search-symbol">
+                                ⌕
+                            </span>
+
+                            <input type="text" id="reportSearch" placeholder="Search reports, locations or users...">
+
+                        </div>
+
+
+                        <div class="filters">
+
+                            <select id="statusFilter">
+
+                                <option value="all">
+                                    All Status
+                                </option>
+
+                                <option value="pending">
+                                    Pending
+                                </option>
+
+                                <option value="progress">
+                                    In Progress
+                                </option>
+
+                                <option value="resolved">
+                                    Resolved
+                                </option>
+
+                            </select>
+
+
+                            <select id="severityFilter">
+
+                                <option value="all">
+                                    All Severity
+                                </option>
+
+                                <option value="high">
+                                    High
+                                </option>
+
+                                <option value="medium">
+                                    Medium
+                                </option>
+
+                                <option value="low">
+                                    Low
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="card">
+
+                        <div class="table-wrapper">
+
+                            <table>
+
+                                <thead>
+
+                                    <tr>
+                                        <th>Issue</th>
+                                        <th>Location</th>
+                                        <th>Reporter</th>
+                                        <th>Severity</th>
+                                        <th>Status</th>
+                                        <th>Reported</th>
+                                        <th>Action</th>
+                                    </tr>
+
+                                </thead>
+
+
+                                <tbody id="reportsTable">
+
+                                    <tr data-status="pending" data-severity="high">
+
+                                        <td>
+
+                                            <div class="issue-cell">
+
+                                                <div class="issue-image">
+                                                    ◉
+                                                </div>
+
+                                                <div class="issue-name">
+
+                                                    <strong>
+                                                        Large Pothole
+                                                    </strong>
+
+                                                    <span>
+                                                        #RL-1042
+                                                    </span>
+
+                                                </div>
+
+                                            </div>
+
+                                        </td>
+
+                                        <td>
+                                            Vasad Main Road
+                                        </td>
+
+                                        <td>
+                                            Rahul Patel
+                                        </td>
+
+                                        <td>
+                                            <strong>High</strong>
+                                        </td>
+
+                                        <td>
+
+                                            <span class="status pending">
+                                                Pending
+                                            </span>
+
+                                        </td>
+
+                                        <td>
+                                            12 min ago
+                                        </td>
+
+                                        <td>
+
+                                            <button class="action-btn"
+                                                onclick="openReport('RL-1042','Large Pothole','Vasad Main Road','Rahul Patel','High','Pending')">
+                                                View
+                                            </button>
+
+                                        </td>
+
+                                    </tr>
+
+
+                                    <tr data-status="progress" data-severity="medium">
+
+                                        <td>
+
+                                            <div class="issue-cell">
+
+                                                <div class="issue-image">
+                                                    ◉
+                                                </div>
+
+                                                <div class="issue-name">
+
+                                                    <strong>
+                                                        Road Crack
+                                                    </strong>
+
+                                                    <span>
+                                                        #RL-1041
+                                                    </span>
+
+                                                </div>
+
+                                            </div>
+
+                                        </td>
+
+                                        <td>
+                                            Station Road
+                                        </td>
+
+                                        <td>
+                                            Priya Shah
+                                        </td>
+
+                                        <td>
+                                            Medium
+                                        </td>
+
+                                        <td>
+
+                                            <span class="status progress">
+                                                In Progress
+                                            </span>
+
+                                        </td>
+
+                                        <td>
+                                            42 min ago
+                                        </td>
+
+                                        <td>
+
+                                            <button class="action-btn"
+                                                onclick="openReport('RL-1041','Road Crack','Station Road','Priya Shah','Medium','In Progress')">
+                                                View
+                                            </button>
+
+                                        </td>
+
+                                    </tr>
+
+
+                                    <tr data-status="resolved" data-severity="low">
+
+                                        <td>
+
+                                            <div class="issue-cell">
+
+                                                <div class="issue-image">
+                                                    ◉
+                                                </div>
+
+                                                <div class="issue-name">
+
+                                                    <strong>
+                                                        Damaged Surface
+                                                    </strong>
+
+                                                    <span>
+                                                        #RL-1040
+                                                    </span>
+
+                                                </div>
+
+                                            </div>
+
+                                        </td>
+
+                                        <td>
+                                            College Road
+                                        </td>
+
+                                        <td>
+                                            Jay Patel
+                                        </td>
+
+                                        <td>
+                                            Low
+                                        </td>
+
+                                        <td>
+
+                                            <span class="status resolved">
+                                                Resolved
+                                            </span>
+
+                                        </td>
+
+                                        <td>
+                                            1 hr ago
+                                        </td>
+
+                                        <td>
+
+                                            <button class="action-btn"
+                                                onclick="openReport('RL-1040','Damaged Surface','College Road','Jay Patel','Low','Resolved')">
+                                                View
+                                            </button>
+
+                                        </td>
+
+                                    </tr>
+
+
+                                    <tr data-status="pending" data-severity="medium">
+
+                                        <td>
+
+                                            <div class="issue-cell">
+
+                                                <div class="issue-image">
+                                                    ◉
+                                                </div>
+
+                                                <div class="issue-name">
+
+                                                    <strong>
+                                                        Broken Road Edge
+                                                    </strong>
+
+                                                    <span>
+                                                        #RL-1039
+                                                    </span>
+
+                                                </div>
+
+                                            </div>
+
+                                        </td>
+
+                                        <td>
+                                            Highway Junction
+                                        </td>
+
+                                        <td>
+                                            Arjun Mehta
+                                        </td>
+
+                                        <td>
+                                            Medium
+                                        </td>
+
+                                        <td>
+
+                                            <span class="status pending">
+                                                Pending
+                                            </span>
+
+                                        </td>
+
+                                        <td>
+                                            2 hrs ago
+                                        </td>
+
+                                        <td>
+
+                                            <button class="action-btn"
+                                                onclick="openReport('RL-1039','Broken Road Edge','Highway Junction','Arjun Mehta','Medium','Pending')">
+                                                View
+                                            </button>
+
+                                        </td>
+
+                                    </tr>
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                 ANALYTICS
+            ================================================== -->
+
+                <section class="view" id="analytics">
+
+                    <div class="page-heading">
+
+                        <div>
+
+                            <h1>Analytics</h1>
+
+                            <p>
+                                Understand road issue patterns and platform activity.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="stats-grid">
+
+                        <div class="stat-card">
+
+                            <span class="stat-title">
+                                Resolution Rate
+                            </span>
+
+                            <div class="stat-value">
+                                63.4%
+                            </div>
+
+                            <div class="stat-change">
+                                +4.2% from last month
+                            </div>
+
+                        </div>
+
+
+                        <div class="stat-card">
+
+                            <span class="stat-title">
+                                Avg. Response
+                            </span>
+
+                            <div class="stat-value">
+                                18m
+                            </div>
+
+                            <div class="stat-change">
+                                -6m improvement
+                            </div>
+
+                        </div>
+
+
+                        <div class="stat-card">
+
+                            <span class="stat-title">
+                                High Severity
+                            </span>
+
+                            <div class="stat-value">
+                                142
+                            </div>
+
+                            <div class="stat-change">
+                                11.4% of reports
+                            </div>
+
+                        </div>
+
+
+                        <div class="stat-card">
+
+                            <span class="stat-title">
+                                Active Areas
+                            </span>
+
+                            <div class="stat-value">
+                                38
+                            </div>
+
+                            <div class="stat-change">
+                                Across monitored zones
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="analytics-grid">
+
+                        <div class="card">
+
+                            <div class="card-header">
+
+                                <h2>Monthly Reports</h2>
+
+                                <span>2026</span>
+
+                            </div>
+
+                            <div class="card-body">
+
+                                <div class="big-chart">
+
+                                    <div class="big-bar-wrap">
+                                        <div class="big-bar" style="height:38%;"></div>
+                                        <span>Jan</span>
+                                    </div>
+
+                                    <div class="big-bar-wrap">
+                                        <div class="big-bar" style="height:48%;"></div>
+                                        <span>Feb</span>
+                                    </div>
+
+                                    <div class="big-bar-wrap">
+                                        <div class="big-bar" style="height:44%;"></div>
+                                        <span>Mar</span>
+                                    </div>
+
+                                    <div class="big-bar-wrap">
+                                        <div class="big-bar" style="height:62%;"></div>
+                                        <span>Apr</span>
+                                    </div>
+
+                                    <div class="big-bar-wrap">
+                                        <div class="big-bar" style="height:70%;"></div>
+                                        <span>May</span>
+                                    </div>
+
+                                    <div class="big-bar-wrap">
+                                        <div class="big-bar" style="height:84%;"></div>
+                                        <span>Jun</span>
+                                    </div>
+
+                                    <div class="big-bar-wrap">
+                                        <div class="big-bar" style="height:92%;"></div>
+                                        <span>Jul</span>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="card">
+
+                            <div class="card-header">
+
+                                <h2>Issue Severity</h2>
+
+                                <span>All reports</span>
+
+                            </div>
+
+                            <div class="card-body">
+
+                                <div class="distribution">
+
+                                    <div class="distribution-row">
+
+                                        <span>High</span>
+
+                                        <div class="progress-track">
+                                            <div class="progress-fill" style="width:31%;"></div>
+                                        </div>
+
+                                        <strong>31%</strong>
+
+                                    </div>
+
+
+                                    <div class="distribution-row">
+
+                                        <span>Medium</span>
+
+                                        <div class="progress-track">
+                                            <div class="progress-fill" style="width:46%;"></div>
+                                        </div>
+
+                                        <strong>46%</strong>
+
+                                    </div>
+
+
+                                    <div class="distribution-row">
+
+                                        <span>Low</span>
+
+                                        <div class="progress-track">
+                                            <div class="progress-fill" style="width:23%;"></div>
+                                        </div>
+
+                                        <strong>23%</strong>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                 USERS
+            ================================================== -->
+
+                <section class="view" id="users">
+
+                    <div class="page-heading">
+
+                        <div>
+
+                            <h1>Users</h1>
+
+                            <p>
+                                Manage RoadLens users and their reporting activity.
+                            </p>
+
+                        </div>
+
+                        <button class="btn btn-primary"
+                            onclick="showToast('Add user form can be connected to backend')">
+                            + Add User
+                        </button>
+
+                    </div>
+
+
+                    <div class="card">
+
+                        <div class="card-header">
+
+                            <h2>Registered Users</h2>
+
+                            <span>2,431 total users</span>
+
+                        </div>
+
+
+                        <div class="table-wrapper">
+
+                            <table>
+
+                                <thead>
+
+                                    <tr>
+                                        <th>User</th>
+                                        <th>Email</th>
+                                        <th>Reports</th>
+                                        <th>Joined</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+
+                                </thead>
+
+
+                                <tbody>
+
+                                    <tr>
+
+                                        <td>
+
+                                            <div class="user-cell">
+
+                                                <div class="user-avatar">
+                                                    RP
+                                                </div>
+
+                                                <strong>
+                                                    Rahul Patel
+                                                </strong>
+
+                                            </div>
+
+                                        </td>
+
+                                        <td>
+                                            rahul@example.com
+                                        </td>
+
+                                        <td>
+                                            18
+                                        </td>
+
+                                        <td>
+                                            Sep 04, 2026
+                                        </td>
+
+                                        <td>
+
+                                            <span class="status resolved">
+                                                Active
+                                            </span>
+
+                                        </td>
+
+                                        <td>
+                                            <button class="action-btn" onclick="showToast('User profile opened')">
+                                                View
+                                            </button>
+                                        </td>
+
+                                    </tr>
+
+
+                                    <tr>
+
+                                        <td>
+
+                                            <div class="user-cell">
+
+                                                <div class="user-avatar">
+                                                    PS
+                                                </div>
+
+                                                <strong>
+                                                    Priya Shah
+                                                </strong>
+
+                                            </div>
+
+                                        </td>
+
+                                        <td>
+                                            priya@example.com
+                                        </td>
+
+                                        <td>
+                                            11
+                                        </td>
+
+                                        <td>
+                                            Aug 21, 2026
+                                        </td>
+
+                                        <td>
+
+                                            <span class="status resolved">
+                                                Active
+                                            </span>
+
+                                        </td>
+
+                                        <td>
+                                            <button class="action-btn" onclick="showToast('User profile opened')">
+                                                View
+                                            </button>
+                                        </td>
+
+                                    </tr>
+
+
+                                    <tr>
+
+                                        <td>
+
+                                            <div class="user-cell">
+
+                                                <div class="user-avatar">
+                                                    JM
+                                                </div>
+
+                                                <strong>
+                                                    Jay Mehta
+                                                </strong>
+
+                                            </div>
+
+                                        </td>
+
+                                        <td>
+                                            jay@example.com
+                                        </td>
+
+                                        <td>
+                                            4
+                                        </td>
+
+                                        <td>
+                                            Aug 09, 2026
+                                        </td>
+
+                                        <td>
+
+                                            <span class="status pending">
+                                                Review
+                                            </span>
+
+                                        </td>
+
+                                        <td>
+                                            <button class="action-btn" onclick="showToast('User profile opened')">
+                                                View
+                                            </button>
+                                        </td>
+
+                                    </tr>
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                 SETTINGS
+            ================================================== -->
+
+                <section class="view" id="settings">
+
+                    <div class="page-heading">
+
+                        <div>
+
+                            <h1>Settings</h1>
+
+                            <p>
+                                Configure your RoadLens administration preferences.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="settings-layout">
+
+
+                        <!-- SETTINGS NAV -->
+
+                        <div class="settings-nav">
+
+                            <button class="settings-tab active" data-setting="general">
+                                General
+                            </button>
+
+                            <button class="settings-tab" data-setting="notifications">
+                                Notifications
+                            </button>
+
+                            <button class="settings-tab" data-setting="reports-settings">
+                                Report Settings
+                            </button>
+
+                        </div>
+
+
+                        <!-- SETTINGS CONTENT -->
+
+                        <div class="settings-content">
+
+
+                            <!-- GENERAL -->
+
+                            <div class="settings-section active" id="general">
+
+                                <h2 class="settings-title">
+                                    General Settings
+                                </h2>
+
+                                <p class="settings-description">
+                                    Basic information used across the RoadLens admin platform.
+                                </p>
+
+
+                                <div class="form-grid">
+
+                                    <div class="form-group">
+
+                                        <label>
+                                            Platform Name
+                                        </label>
+
+                                        <input id="platformName" type="text" value="RoadLens">
+
+                                    </div>
+
+
+                                    <div class="form-group">
+
+                                        <label>
+                                            Admin Email
+                                        </label>
+
+                                        <input id="adminEmail" type="email" value="admin@roadlens.com">
+
+                                    </div>
+
+
+                                    <div class="form-group full">
+
+                                        <label>
+                                            Platform Description
+                                        </label>
+
+                                        <input id="platformDescription" type="text"
+                                            value="AI-powered civic infrastructure reporting platform">
+
+                                    </div>
+
+
+                                    <div class="form-group">
+
+                                        <label>
+                                            Default Language
+                                        </label>
+
+                                        <select id="language">
+
+                                            <option>
+                                                English
+                                            </option>
+
+                                            <option>
+                                                Hindi
+                                            </option>
+
+                                            <option>
+                                                Gujarati
+                                            </option>
+
+                                        </select>
+
+                                    </div>
+
+
+                                    <div class="form-group">
+
+                                        <label>
+                                            Time Zone
+                                        </label>
+
+                                        <select id="timezone">
+
+                                            <option>
+                                                Asia/Kolkata
+                                            </option>
+
+                                            <option>
+                                                UTC
+                                            </option>
+
+                                        </select>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="settings-footer">
+
+                                    <button class="btn btn-secondary" onclick="resetGeneralSettings()">
+                                        Reset
+                                    </button>
+
+                                    <button class="btn btn-primary" onclick="saveGeneralSettings()">
+                                        Save Changes
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- NOTIFICATIONS -->
+
+                            <div class="settings-section" id="notifications">
+
+                                <h2 class="settings-title">
+                                    Notifications
+                                </h2>
+
+                                <p class="settings-description">
+                                    Control which administrative alerts RoadLens should display.
+                                </p>
+
+
+                                <div class="toggle-row">
+
+                                    <div class="toggle-info">
+
+                                        <strong>
+                                            New report notifications
+                                        </strong>
+
+                                        <span>
+                                            Receive an alert whenever a new road issue is submitted.
+                                        </span>
+
+                                    </div>
+
+                                    <button class="toggle active" data-toggle="newReports"></button>
+
+                                </div>
+
+
+                                <div class="toggle-row">
+
+                                    <div class="toggle-info">
+
+                                        <strong>
+                                            High severity alerts
+                                        </strong>
+
+                                        <span>
+                                            Highlight reports classified as high severity.
+                                        </span>
+
+                                    </div>
+
+                                    <button class="toggle active" data-toggle="highSeverity"></button>
+
+                                </div>
+
+
+                                <div class="toggle-row">
+
+                                    <div class="toggle-info">
+
+                                        <strong>
+                                            Resolution notifications
+                                        </strong>
+
+                                        <span>
+                                            Notify administrators when a report is resolved.
+                                        </span>
+
+                                    </div>
+
+                                    <button class="toggle" data-toggle="resolved"></button>
+
+                                </div>
+
+
+                                <div class="settings-footer">
+
+                                    <button class="btn btn-primary" onclick="saveNotificationSettings()">
+                                        Save Preferences
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- REPORT SETTINGS -->
+
+                            <div class="settings-section" id="reports-settings">
+
+                                <h2 class="settings-title">
+                                    Report Settings
+                                </h2>
+
+                                <p class="settings-description">
+                                    Define how submitted road reports are handled.
+                                </p>
+
+
+                                <div class="form-grid">
+
+                                    <div class="form-group">
+
+                                        <label>
+                                            Default Report Status
+                                        </label>
+
+                                        <select id="defaultStatus">
+
+                                            <option>
+                                                Pending
+                                            </option>
+
+                                            <option>
+                                                Under Review
+                                            </option>
+
+                                        </select>
+
+                                    </div>
+
+
+                                    <div class="form-group">
+
+                                        <label>
+                                            Minimum Photo Count
+                                        </label>
+
+                                        <select id="photoCount">
+
+                                            <option>
+                                                1
+                                            </option>
+
+                                            <option selected>
+                                                1
+                                            </option>
+
+                                            <option>
+                                                2
+                                            </option>
+
+                                            <option>
+                                                3
+                                            </option>
+
+                                        </select>
+
+                                    </div>
+
+
+                                    <div class="form-group full">
+
+                                        <label>
+                                            Automatic Report Assignment
+                                        </label>
+
+                                        <select id="assignment">
+
+                                            <option>
+                                                Automatically assign by area
+                                            </option>
+
+                                            <option>
+                                                Admin review first
+                                            </option>
+
+                                            <option>
+                                                Manual assignment
+                                            </option>
+
+                                        </select>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="settings-footer">
+
+                                    <button class="btn btn-primary" onclick="saveReportSettings()">
+                                        Save Report Settings
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+            </div>
+
+        </main>
+
+    </div>
+
+
+    <!-- =========================================================
+     REPORT MODAL
+========================================================= -->
+
+    <div class="modal-overlay" id="reportModal">
+
+        <div class="modal">
+
+            <div class="modal-header">
+
+                <h2>
+                    Report Details
+                </h2>
+
+                <button class="close-modal" onclick="closeReport()">
+                    ×
+                </button>
+
+            </div>
+
+
+            <div class="modal-body">
+
+                <div class="detail-grid">
+
+                    <div class="detail">
+
+                        <small>
+                            Report ID
+                        </small>
+
+                        <strong id="modalId">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div class="detail">
+
+                        <small>
+                            Issue
+                        </small>
+
+                        <strong id="modalIssue">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div class="detail">
+
+                        <small>
+                            Location
+                        </small>
+
+                        <strong id="modalLocation">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div class="detail">
+
+                        <small>
+                            Reporter
+                        </small>
+
+                        <strong id="modalReporter">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div class="detail">
+
+                        <small>
+                            Severity
+                        </small>
+
+                        <strong id="modalSeverity">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div class="detail">
+
+                        <small>
+                            Current Status
+                        </small>
+
+                        <strong id="modalStatus">
+                            —
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div style="margin-top:18px;">
+
+                    <div class="form-group">
+
+                        <label>
+                            Update Status
+                        </label>
+
+                        <select id="updateStatus">
+
+                            <option value="pending">
+                                Pending
+                            </option>
+
+                            <option value="progress">
+                                In Progress
+                            </option>
+
+                            <option value="resolved">
+                                Resolved
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="modal-footer">
+
+                <button class="btn btn-secondary" onclick="closeReport()">
+                    Close
+                </button>
+
+                <button class="btn btn-primary" onclick="updateReportStatus()">
+                    Update Status
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- TOAST -->
+
+    <div class="toast" id="toast"></div>
+
+
+    <script>
+
+        /* =====================================================
+           ROADLENS ADMIN JAVASCRIPT
+        ===================================================== */
+
+
+        const pageTitles = {
+            dashboard: "Dashboard",
+            reports: "Reports",
+            analytics: "Analytics",
+            users: "Users",
+            settings: "Settings"
+        };
+
+
+        /* =====================================================
+           VIEW NAVIGATION
+        ===================================================== */
+
+        function switchView(viewName) {
+
+            document.querySelectorAll(".view").forEach(view => {
+                view.classList.remove("active");
+            });
+
+            document.getElementById(viewName)?.classList.add("active");
+
+
+            document.querySelectorAll(".nav-item").forEach(button => {
+
+                button.classList.toggle(
+                    "active",
+                    button.dataset.view === viewName
+                );
+
+            });
+
+
+            document.getElementById("pageTitle").textContent =
+                pageTitles[viewName] || "Dashboard";
+
+
+            document.getElementById("sidebar")
+                .classList.remove("open");
+
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+
+        }
+
+
+        document.querySelectorAll(".nav-item").forEach(button => {
+
+            button.addEventListener("click", () => {
+
+                switchView(button.dataset.view);
+
+            });
+
+        });
+
+
+        /* =====================================================
+           MOBILE SIDEBAR
+        ===================================================== */
+
+        document
+            .getElementById("mobileMenu")
+            .addEventListener("click", () => {
+
+                document
+                    .getElementById("sidebar")
+                    .classList.toggle("open");
+
+            });
+
+
+        /* =====================================================
+           COUNTERS
+        ===================================================== */
+
+        function animateCounters() {
+
+            document
+                .querySelectorAll("[data-number]")
+                .forEach(counter => {
+
+                    const target =
+                        Number(counter.dataset.number);
+
+                    let current = 0;
+
+                    const increment =
+                        Math.max(1, Math.ceil(target / 45));
+
+                    const timer = setInterval(() => {
+
+                        current += increment;
+
+                        if (current >= target) {
+
+                            current = target;
+
+                            clearInterval(timer);
+
+                        }
+
+                        counter.textContent =
+                            current.toLocaleString();
+
+                    }, 25);
+
+                });
+
+        }
+
+
+        animateCounters();
+
+
+        /* =====================================================
+           REPORT SEARCH + FILTER
+        ===================================================== */
+
+        const reportSearch =
+            document.getElementById("reportSearch");
+
+        const statusFilter =
+            document.getElementById("statusFilter");
+
+        const severityFilter =
+            document.getElementById("severityFilter");
+
+
+        function filterReports() {
+
+            const search =
+                reportSearch.value.toLowerCase().trim();
+
+            const status =
+                statusFilter.value;
+
+            const severity =
+                severityFilter.value;
+
+
+            document
+                .querySelectorAll("#reportsTable tr")
+                .forEach(row => {
+
+                    const text =
+                        row.textContent.toLowerCase();
+
+                    const rowStatus =
+                        row.dataset.status;
+
+                    const rowSeverity =
+                        row.dataset.severity;
+
+
+                    const matchesSearch =
+                        text.includes(search);
+
+                    const matchesStatus =
+                        status === "all" ||
+                        rowStatus === status;
+
+                    const matchesSeverity =
+                        severity === "all" ||
+                        rowSeverity === severity;
+
+
+                    row.style.display =
+                        matchesSearch &&
+                            matchesStatus &&
+                            matchesSeverity
+                            ? ""
+                            : "none";
+
+                });
+
+        }
+
+
+        reportSearch.addEventListener(
+            "input",
+            filterReports
+        );
+
+        statusFilter.addEventListener(
+            "change",
+            filterReports
+        );
+
+        severityFilter.addEventListener(
+            "change",
+            filterReports
+        );
+
+
+        /* =====================================================
+           REPORT MODAL
+        ===================================================== */
+
+        let activeReportId = null;
+
+
+        function openReport(
+            id,
+            issue,
+            location,
+            reporter,
+            severity,
+            status
+        ) {
+
+            activeReportId = id;
+
+
+            document.getElementById("modalId")
+                .textContent = id;
+
+            document.getElementById("modalIssue")
+                .textContent = issue;
+
+            document.getElementById("modalLocation")
+                .textContent = location;
+
+            document.getElementById("modalReporter")
+                .textContent = reporter;
+
+            document.getElementById("modalSeverity")
+                .textContent = severity;
+
+            document.getElementById("modalStatus")
+                .textContent = status;
+
+
+            const select =
+                document.getElementById("updateStatus");
+
+
+            if (status === "Pending") {
+                select.value = "pending";
+            }
+
+            if (status === "In Progress") {
+                select.value = "progress";
+            }
+
+            if (status === "Resolved") {
+                select.value = "resolved";
+            }
+
+
+            document
+                .getElementById("reportModal")
+                .classList.add("open");
+
+        }
+
+
+        function closeReport() {
+
+            document
+                .getElementById("reportModal")
+                .classList.remove("open");
+
+            activeReportId = null;
+
+        }
+
+
+        function updateReportStatus() {
+
+            const newStatus =
+                document.getElementById("updateStatus").value;
+
+
+            const statusNames = {
+                pending: "Pending",
+                progress: "In Progress",
+                resolved: "Resolved"
+            };
+
+
+            /*
+             * FRONTEND DEMO:
+             * In the backend version this is where
+             * you will send the report ID + status
+             * to your API/database.
+             */
+
+
+            showToast(
+                `${activeReportId} updated to ${statusNames[newStatus]}`
+            );
+
+
+            closeReport();
+
+        }
+
+
+        /* =====================================================
+           SETTINGS TABS
+        ===================================================== */
+
+        document
+            .querySelectorAll(".settings-tab")
+            .forEach(tab => {
+
+                tab.addEventListener("click", () => {
+
+                    document
+                        .querySelectorAll(".settings-tab")
+                        .forEach(item =>
+                            item.classList.remove("active")
+                        );
+
+
+                    document
+                        .querySelectorAll(".settings-section")
+                        .forEach(section =>
+                            section.classList.remove("active")
+                        );
+
+
+                    tab.classList.add("active");
+
+
+                    document
+                        .getElementById(tab.dataset.setting)
+                        .classList.add("active");
+
+                });
+
+            });
+
+
+        /* =====================================================
+           TOGGLE SETTINGS
+        ===================================================== */
+
+        document
+            .querySelectorAll(".toggle")
+            .forEach(toggle => {
+
+                toggle.addEventListener("click", () => {
+
+                    toggle.classList.toggle("active");
+
+                });
+
+            });
+
+
+        /* =====================================================
+           GENERAL SETTINGS
+        ===================================================== */
+
+        function saveGeneralSettings() {
+
+            const platformName =
+                document.getElementById("platformName").value.trim();
+
+            const adminEmail =
+                document.getElementById("adminEmail").value.trim();
+
+
+            if (!platformName || !adminEmail) {
+
+                showToast(
+                    "Please complete the required fields"
+                );
+
+                return;
+
+            }
+
+
+            /*
+             * Save to localStorage for now.
+             * Later replace this with your backend API.
+             */
+
+            const settings = {
+
+                platformName,
+
+                adminEmail,
+
+                description:
+                    document.getElementById(
+                        "platformDescription"
+                    ).value,
+
+                language:
+                    document.getElementById("language").value,
+
+                timezone:
+                    document.getElementById("timezone").value
+
+            };
+
+
+            localStorage.setItem(
+                "roadlensGeneralSettings",
+                JSON.stringify(settings)
+            );
+
+
+            showToast(
+                "General settings saved successfully ✓"
+            );
+
+        }
+
+
+        function resetGeneralSettings() {
+
+            document.getElementById("platformName").value =
+                "RoadLens";
+
+            document.getElementById("adminEmail").value =
+                "admin@roadlens.com";
+
+            document.getElementById("platformDescription").value =
+                "AI-powered civic infrastructure reporting platform";
+
+            document.getElementById("language").value =
+                "English";
+
+            document.getElementById("timezone").value =
+                "Asia/Kolkata";
+
+
+            showToast(
+                "Settings restored to defaults"
+            );
+
+        }
+
+
+        /* =====================================================
+           LOAD SAVED SETTINGS
+        ===================================================== */
+
+        function loadGeneralSettings() {
+
+            const saved =
+                localStorage.getItem(
+                    "roadlensGeneralSettings"
+                );
+
+
+            if (!saved) return;
+
+
+            try {
+
+                const settings =
+                    JSON.parse(saved);
+
+
+                if (settings.platformName)
+                    document.getElementById(
+                        "platformName"
+                    ).value = settings.platformName;
+
+
+                if (settings.adminEmail)
+                    document.getElementById(
+                        "adminEmail"
+                    ).value = settings.adminEmail;
+
+
+                if (settings.description)
+                    document.getElementById(
+                        "platformDescription"
+                    ).value = settings.description;
+
+
+                if (settings.language)
+                    document.getElementById(
+                        "language"
+                    ).value = settings.language;
+
+
+                if (settings.timezone)
+                    document.getElementById(
+                        "timezone"
+                    ).value = settings.timezone;
+
+            }
+
+            catch (error) {
+
+                console.log(
+                    "Could not load settings",
+                    error
+                );
+
+            }
+
+        }
+
+
+        loadGeneralSettings();
+
+
+        /* =====================================================
+           NOTIFICATION SETTINGS
+        ===================================================== */
+
+        function saveNotificationSettings() {
+
+            const settings = {};
+
+
+            document
+                .querySelectorAll(".toggle")
+                .forEach(toggle => {
+
+                    settings[
+                        toggle.dataset.toggle
+                    ] =
+                        toggle.classList.contains("active");
+
+                });
+
+
+            localStorage.setItem(
+                "roadlensNotificationSettings",
+                JSON.stringify(settings)
+            );
+
+
+            showToast(
+                "Notification preferences saved ✓"
+            );
+
+        }
+
+
+        /* =====================================================
+           REPORT SETTINGS
+        ===================================================== */
+
+        function saveReportSettings() {
+
+            const settings = {
+
+                defaultStatus:
+                    document.getElementById(
+                        "defaultStatus"
+                    ).value,
+
+                photoCount:
+                    document.getElementById(
+                        "photoCount"
+                    ).value,
+
+                assignment:
+                    document.getElementById(
+                        "assignment"
+                    ).value
+
+            };
+
+
+            localStorage.setItem(
+                "roadlensReportSettings",
+                JSON.stringify(settings)
+            );
+
+
+            showToast(
+                "Report settings saved ✓"
+            );
+
+        }
+
+
+        /* =====================================================
+           TOAST
+        ===================================================== */
+
+        let toastTimer;
+
+
+        function showToast(message) {
+
+            const toast =
+                document.getElementById("toast");
+
+
+            toast.textContent = message;
+
+            toast.classList.add("show");
+
+
+            clearTimeout(toastTimer);
+
+
+            toastTimer = setTimeout(() => {
+
+                toast.classList.remove("show");
+
+            }, 2600);
+
+        }
+
+
+        /* =====================================================
+           CLOSE MODAL WHEN CLICKING OUTSIDE
+        ===================================================== */
+
+        document
+            .getElementById("reportModal")
+            .addEventListener("click", event => {
+
+                if (
+                    event.target.id === "reportModal"
+                ) {
+
+                    closeReport();
+
+                }
+
+            });
+
+
+        /* =====================================================
+           ESC KEY
+        ===================================================== */
+
+        document.addEventListener("keydown", event => {
+
+            if (event.key === "Escape") {
+
+                closeReport();
+
+            }
+
+        });
+
+    </script>
+
+</body>
+
+</html>
