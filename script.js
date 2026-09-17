@@ -689,7 +689,7 @@ reportForm?.addEventListener(
     )?.value;
     let latitude = null;
     let longitude = null;
-
+    const photoFile = document.getElementById("roadPhoto")?.files?.[0] || null;
     const coordinateMatch = location.match(
       /(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/
     );
@@ -699,6 +699,38 @@ reportForm?.addEventListener(
       longitude = parseFloat(coordinateMatch[2]);
     }
     try {
+
+      let imageUrl = null;
+
+      if (photoFile) {
+
+        const fileExtension = photoFile.name
+          .split(".")
+          .pop()
+          .toLowerCase();
+
+        const fileName =
+          `${session.user.id}/${crypto.randomUUID()}.${fileExtension}`;
+
+        const { error: uploadError } = await supabaseClient
+          .storage
+          .from("road-images")
+          .upload(fileName, photoFile, {
+            cacheControl: "3600",
+            upsert: false
+          });
+
+        if (uploadError) {
+          throw uploadError;
+        }
+
+        const { data: publicUrlData } = supabaseClient
+          .storage
+          .from("road-images")
+          .getPublicUrl(fileName);
+
+        imageUrl = publicUrlData.publicUrl;
+      }
 
       const { data, error } = await supabaseClient
         .from("reports")
@@ -710,6 +742,7 @@ reportForm?.addEventListener(
           location_text: location,
           latitude: latitude,
           longitude: longitude,
+          image_url: imageUrl,
           status: "Submitted"
         })
         .select()
