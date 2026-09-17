@@ -13,6 +13,151 @@ let reports = [];
    LOAD USER REPORTS
 ========================================= */
 
+function mapDatabaseStatus(status) {
+
+    if (!status) {
+        return "submitted";
+    }
+
+    const normalized = status.toLowerCase();
+
+    if (
+        normalized === "in progress" ||
+        normalized === "progress"
+    ) {
+        return "progress";
+    }
+
+    if (
+        normalized === "under review" ||
+        normalized === "review"
+    ) {
+        return "review";
+    }
+
+    if (normalized === "resolved") {
+        return "resolved";
+    }
+
+    return "submitted";
+}
+function formatReportDate(dateString) {
+
+    if (!dateString) {
+        return "Unknown date";
+    }
+
+    return new Date(dateString).toLocaleDateString(
+        "en-US",
+        {
+            month: "short",
+            day: "numeric",
+            year: "numeric"
+        }
+    );
+}
+function getLatestUpdate(status) {
+
+    const normalized = (status || "").toLowerCase();
+
+    if (normalized === "resolved") {
+        return "Issue resolved";
+    }
+
+    if (
+        normalized === "in progress" ||
+        normalized === "progress"
+    ) {
+        return "Repair work in progress";
+    }
+
+    if (
+        normalized === "under review" ||
+        normalized === "review"
+    ) {
+        return "Report is being reviewed";
+    }
+
+    return "Report successfully submitted";
+}
+function buildTimeline(report) {
+
+    const status = mapDatabaseStatus(report.status);
+
+    const submittedTime = formatReportDate(
+        report.created_at
+    );
+
+    const timeline = [
+        {
+            title: "Report submitted",
+            description:
+                "Your road issue was successfully received.",
+            time: submittedTime,
+            state: "complete"
+        },
+        {
+            title: "Report verified",
+            description:
+                "The issue will be reviewed and verified.",
+            time: status === "review" ||
+                status === "progress" ||
+                status === "resolved"
+                ? "Completed"
+                : "Pending",
+            state:
+                status === "review" ||
+                    status === "progress" ||
+                    status === "resolved"
+                    ? "complete"
+                    : ""
+        },
+        {
+            title: "Repair team assigned",
+            description:
+                "A repair team will be assigned after verification.",
+            time:
+                status === "progress" ||
+                    status === "resolved"
+                    ? "Completed"
+                    : "Pending",
+            state:
+                status === "progress" ||
+                    status === "resolved"
+                    ? "complete"
+                    : ""
+        },
+        {
+            title: "Road repair",
+            description:
+                "Repair work will begin at the reported location.",
+            time:
+                status === "resolved"
+                    ? "Completed"
+                    : "Pending",
+            state:
+                status === "resolved"
+                    ? "complete"
+                    : ""
+        },
+        {
+            title: "Issue resolved",
+            description:
+                "The report will be marked resolved after completion.",
+            time:
+                status === "resolved"
+                    ? "Completed"
+                    : "Pending",
+            state:
+                status === "resolved"
+                    ? "complete"
+                    : ""
+        }
+    ];
+
+    return timeline;
+}
+
 async function loadReports() {
 
     const {
@@ -892,11 +1037,4 @@ function showToast(message) {
 
 }
 
-
-/* =========================================
-   INITIALIZE
-========================================= */
-
-updateSummary();
-
-renderReports("all");
+loadReports();
