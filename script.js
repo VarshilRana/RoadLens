@@ -687,7 +687,17 @@ reportForm?.addEventListener(
     const severity = document.querySelector(
       'input[name="severity"]:checked'
     )?.value;
+    let latitude = null;
+    let longitude = null;
 
+    const coordinateMatch = location.match(
+      /(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/
+    );
+
+    if (coordinateMatch) {
+      latitude = parseFloat(coordinateMatch[1]);
+      longitude = parseFloat(coordinateMatch[2]);
+    }
     try {
 
       const { data, error } = await supabaseClient
@@ -698,6 +708,8 @@ reportForm?.addEventListener(
           description: description,
           severity: severity,
           location_text: location,
+          latitude: latitude,
+          longitude: longitude,
           status: "Submitted"
         })
         .select()
