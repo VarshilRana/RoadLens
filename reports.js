@@ -4,368 +4,80 @@
 
 
 /* =========================================
-   DEMO REPORT DATA
+   SUPABASE REPORT DATA
 ========================================= */
 
-const reports = [
+let reports = [];
 
-    {
-        id: "RL-2026-12842",
+/* =========================================
+   LOAD USER REPORTS
+========================================= */
 
-        title: "Pothole on Sayajigunj Road",
+async function loadReports() {
 
-        type: "Pothole",
+    const {
+        data: { session },
+        error: sessionError
+    } = await supabaseClient.auth.getSession();
 
-        location: "Sayajigunj, Vadodara",
-
-        severity: "High",
-
-        status: "progress",
-
-        statusLabel: "In progress",
-
-        date: "Sep 15, 2026",
-
-        update: "Repair team assigned",
-
-        description:
-            "Large pothole near the road junction. It becomes difficult to notice at night and may be unsafe for two-wheelers.",
-
-        timeline: [
-
-            {
-                title: "Report submitted",
-
-                description:
-                    "Your road issue was successfully received.",
-
-                time: "Sep 15 · 10:42 AM",
-
-                state: "complete"
-
-            },
-
-            {
-                title: "Report verified",
-
-                description:
-                    "The issue was reviewed and verified.",
-
-                time: "Sep 15 · 11:08 AM",
-
-                state: "complete"
-
-            },
-
-            {
-                title: "Repair team assigned",
-
-                description:
-                    "The issue has been assigned for road repair.",
-
-                time: "Sep 15 · 01:24 PM",
-
-                state: "current"
-
-            },
-
-            {
-                title: "Road repair",
-
-                description:
-                    "Repair work will begin at the reported location.",
-
-                time: "Pending",
-
-                state: ""
-
-            },
-
-            {
-                title: "Issue resolved",
-
-                description:
-                    "The road issue will be marked resolved after completion.",
-
-                time: "Pending",
-
-                state: ""
-
-            }
-
-        ]
-
-    },
-
-
-    {
-        id: "RL-2026-12791",
-
-        title: "Damaged road surface",
-
-        type: "Damaged road",
-
-        location: "Alkapuri, Vadodara",
-
-        severity: "Medium",
-
-        status: "review",
-
-        statusLabel: "Under review",
-
-        date: "Sep 14, 2026",
-
-        update: "Report is being reviewed",
-
-        description:
-            "A damaged section of the road surface is creating an uneven driving area near the intersection.",
-
-        timeline: [
-
-            {
-                title: "Report submitted",
-
-                description:
-                    "Your road issue was successfully received.",
-
-                time: "Sep 14 · 04:18 PM",
-
-                state: "complete"
-
-            },
-
-            {
-                title: "Under review",
-
-                description:
-                    "The report is currently being verified.",
-
-                time: "Sep 15 · 09:15 AM",
-
-                state: "current"
-
-            },
-
-            {
-                title: "Repair team assigned",
-
-                description:
-                    "A repair team will be assigned after verification.",
-
-                time: "Pending",
-
-                state: ""
-
-            },
-
-            {
-                title: "Road repair",
-
-                description:
-                    "Repair work will begin after assignment.",
-
-                time: "Pending",
-
-                state: ""
-
-            },
-
-            {
-                title: "Issue resolved",
-
-                description:
-                    "The issue will be marked resolved after completion.",
-
-                time: "Pending",
-
-                state: ""
-
-            }
-
-        ]
-
-    },
-
-
-    {
-        id: "RL-2026-12673",
-
-        title: "Broken streetlight",
-
-        type: "Streetlight",
-
-        location: "Fatehgunj, Vadodara",
-
-        severity: "High",
-
-        status: "resolved",
-
-        statusLabel: "Resolved",
-
-        date: "Sep 12, 2026",
-
-        update: "Streetlight repaired",
-
-        description:
-            "Streetlight near the pedestrian crossing was not working during the evening.",
-
-        timeline: [
-
-            {
-                title: "Report submitted",
-
-                description:
-                    "Your road issue was successfully received.",
-
-                time: "Sep 10 · 07:32 PM",
-
-                state: "complete"
-
-            },
-
-            {
-                title: "Report verified",
-
-                description:
-                    "The issue was reviewed and verified.",
-
-                time: "Sep 11 · 09:12 AM",
-
-                state: "complete"
-
-            },
-
-            {
-                title: "Repair team assigned",
-
-                description:
-                    "The issue was assigned to the maintenance team.",
-
-                time: "Sep 11 · 11:40 AM",
-
-                state: "complete"
-
-            },
-
-            {
-                title: "Repair completed",
-
-                description:
-                    "The streetlight was repaired successfully.",
-
-                time: "Sep 12 · 06:20 PM",
-
-                state: "complete"
-
-            },
-
-            {
-                title: "Issue resolved",
-
-                description:
-                    "The report has been marked as resolved.",
-
-                time: "Sep 12 · 07:05 PM",
-
-                state: "complete"
-
-            }
-
-        ]
-
-    },
-
-
-    {
-        id: "RL-2026-12448",
-
-        title: "Cracked road surface",
-
-        type: "Cracked road",
-
-        location: "Manjalpur, Vadodara",
-
-        severity: "Low",
-
-        status: "resolved",
-
-        statusLabel: "Resolved",
-
-        date: "Sep 08, 2026",
-
-        update: "Road surface repaired",
-
-        description:
-            "Several cracks were visible across the road surface near the residential lane.",
-
-        timeline: [
-
-            {
-                title: "Report submitted",
-
-                description:
-                    "Your road issue was successfully received.",
-
-                time: "Sep 08 · 09:14 AM",
-
-                state: "complete"
-
-            },
-
-            {
-                title: "Report verified",
-
-                description:
-                    "The issue was reviewed and verified.",
-
-                time: "Sep 08 · 11:30 AM",
-
-                state: "complete"
-
-            },
-
-            {
-                title: "Repair team assigned",
-
-                description:
-                    "The issue was assigned to the road maintenance team.",
-
-                time: "Sep 09 · 10:15 AM",
-
-                state: "complete"
-
-            },
-
-            {
-                title: "Road repair",
-
-                description:
-                    "The damaged surface was repaired.",
-
-                time: "Sep 10 · 03:40 PM",
-
-                state: "complete"
-
-            },
-
-            {
-                title: "Issue resolved",
-
-                description:
-                    "The report has been marked as resolved.",
-
-                time: "Sep 10 · 04:05 PM",
-
-                state: "complete"
-
-            }
-
-        ]
-
+    if (sessionError) {
+        console.error("Session error:", sessionError);
+        return;
     }
 
-];
+    if (!session) {
+        window.location.href = "auth.html";
+        return;
+    }
 
+    const { data, error } = await supabaseClient
+        .from("reports")
+        .select("*")
+        .eq("user_id", session.user.id)
+        .order("created_at", {
+            ascending: false
+        });
+
+    if (error) {
+        console.error("Failed to load reports:", error);
+        showToast("Unable to load your reports.");
+        return;
+    }
+
+    reports = data.map(report => ({
+        id: report.id,
+        title: report.issue_type
+            ? report.issue_type
+                .replace(/-/g, " ")
+                .replace(/\b\w/g, char => char.toUpperCase())
+            : "Road issue",
+
+        type: report.issue_type || "Unknown",
+
+        location: report.location_text || "Location unavailable",
+
+        severity: report.severity || "Low",
+
+        status: mapDatabaseStatus(report.status),
+
+        statusLabel: getStatusLabel(
+            mapDatabaseStatus(report.status)
+        ),
+
+        date: formatReportDate(report.created_at),
+
+        update: getLatestUpdate(report.status),
+
+        description: report.description || "No description provided.",
+
+        timeline: buildTimeline(report)
+
+    }));
+
+    updateSummary();
+    renderReports();
+
+}
 
 /* =========================================
    DOM
