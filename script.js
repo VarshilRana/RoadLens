@@ -657,77 +657,83 @@ function validateRoadReport() {
 
 reportForm?.addEventListener(
   "submit",
-  function (event) {
+  async function (event) {
 
     event.preventDefault();
 
-
     if (!validateRoadReport()) {
-
       return;
-
     }
 
+    const {
+      data: { session }
+    } = await supabaseClient.auth.getSession();
 
-    const submitButton =
-      this.querySelector(
-        ".report-submit"
+    if (!session) {
+      showToast("Please sign in to submit a report.");
+      return;
+    }
+
+    const submitButton = this.querySelector(".report-submit");
+    const submitText = document.getElementById("reportSubmitText");
+
+    submitButton.disabled = true;
+    submitText.textContent = "Submitting…";
+
+    const issueType = document.getElementById("issueType").value;
+    const location = document.getElementById("roadLocation").value.trim();
+    const description = document.getElementById("roadDescription").value.trim();
+
+    const severity = document.querySelector(
+      'input[name="severity"]:checked'
+    )?.value;
+
+    try {
+
+      const { data, error } = await supabaseClient
+        .from("reports")
+        .insert({
+          user_id: session.user.id,
+          issue_type: issueType,
+          description: description,
+          severity: severity,
+          location_text: location,
+          status: "Submitted"
+        })
+        .select()
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      console.log("Report created:", data);
+
+      document.getElementById("generatedReportId").textContent =
+        data.id;
+
+      reportForm.hidden = true;
+
+      document.querySelector(".report-dialog-head").hidden = true;
+
+      reportSuccess.hidden = false;
+
+      showToast("Report submitted successfully ✓");
+
+    } catch (error) {
+
+      console.error("Report submission error:", error);
+
+      showToast(
+        error.message || "Unable to submit report."
       );
 
+    } finally {
 
-    submitButton.disabled =
-      true;
+      submitButton.disabled = false;
+      submitText.textContent = "Submit report";
 
-
-    document.getElementById(
-      "reportSubmitText"
-    ).textContent =
-      "Submitting…";
-
-
-    setTimeout(
-      function () {
-
-        const reportId =
-          `RL-${new Date().getFullYear()}-${Math.floor(
-            10000 +
-            Math.random() * 90000
-          )}`;
-
-
-        document.getElementById(
-          "generatedReportId"
-        ).textContent =
-          reportId;
-
-
-        reportForm.hidden =
-          true;
-
-
-        document.querySelector(
-          ".report-dialog-head"
-        ).hidden =
-          true;
-
-
-        reportSuccess.hidden =
-          false;
-
-
-        submitButton.disabled =
-          false;
-
-
-        document.getElementById(
-          "reportSubmitText"
-        ).textContent =
-          "Submit report";
-
-
-      },
-      900
-    );
+    }
 
   }
 );
