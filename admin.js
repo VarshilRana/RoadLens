@@ -1,1204 +1,602 @@
 /* =========================================
    ROADLENS — ADMIN DASHBOARD
+   SUPABASE BACKEND
 ========================================= */
 
-
-/* =========================================
-   DEMO REPORT DATA
-========================================= */
-
-const reports = [
-
-    {
-        id: "RL-2026-12842",
-        title: "Pothole on Sayajigunj Road",
-        type: "Pothole",
-        location: "Sayajigunj, Vadodara",
-        severity: "High",
-        status: "progress",
-        date: "Sep 15, 2026",
-        description:
-            "Large pothole near the road junction. It becomes difficult to notice at night and may be unsafe for two-wheelers."
-    },
-
-
-    {
-        id: "RL-2026-12791",
-        title: "Damaged road surface",
-        type: "Damaged road",
-        location: "Alkapuri, Vadodara",
-        severity: "Medium",
-        status: "review",
-        date: "Sep 14, 2026",
-        description:
-            "A damaged section of the road surface is creating an uneven driving area near the intersection."
-    },
-
-
-    {
-        id: "RL-2026-12754",
-        title: "Deep pothole near junction",
-        type: "Pothole",
-        location: "Akota, Vadodara",
-        severity: "Critical",
-        status: "pending",
-        date: "Sep 14, 2026",
-        description:
-            "A deep pothole has formed near the junction and is affecting traffic movement."
-    },
-
-
-    {
-        id: "RL-2026-12692",
-        title: "Waterlogging after rainfall",
-        type: "Waterlogging",
-        location: "Gotri, Vadodara",
-        severity: "High",
-        status: "progress",
-        date: "Sep 13, 2026",
-        description:
-            "Water accumulation is covering a significant portion of the road after rainfall."
-    },
-
-
-    {
-        id: "RL-2026-12631",
-        title: "Broken streetlight",
-        type: "Streetlight",
-        location: "Manjalpur, Vadodara",
-        severity: "Low",
-        status: "resolved",
-        date: "Sep 12, 2026",
-        description:
-            "Streetlight is not functioning near the residential road."
-    },
-
-
-    {
-        id: "RL-2026-12588",
-        title: "Road crack near school",
-        type: "Damaged road",
-        location: "Fatehgunj, Vadodara",
-        severity: "High",
-        status: "pending",
-        date: "Sep 11, 2026",
-        description:
-            "Multiple cracks have appeared on the road near the school entrance."
-    },
-
-
-    {
-        id: "RL-2026-12542",
-        title: "Large pothole",
-        type: "Pothole",
-        location: "Vasna Road, Vadodara",
-        severity: "Critical",
-        status: "progress",
-        date: "Sep 10, 2026",
-        description:
-            "Large pothole causing vehicles to slow down and move around the damaged section."
-    },
-
-
-    {
-        id: "RL-2026-12491",
-        title: "Uneven road surface",
-        type: "Damaged road",
-        location: "Karelibaug, Vadodara",
-        severity: "Medium",
-        status: "resolved",
-        date: "Sep 09, 2026",
-        description:
-            "Uneven road surface reported near the main road."
-    },
-
-
-    {
-        id: "RL-2026-12453",
-        title: "Blocked drainage causing waterlogging",
-        type: "Waterlogging",
-        location: "Harni Road, Vadodara",
-        severity: "High",
-        status: "review",
-        date: "Sep 08, 2026",
-        description:
-            "Blocked drainage is causing water to collect along the road."
-    },
-
-
-    {
-        id: "RL-2026-12394",
-        title: "Road damage near market",
-        type: "Damaged road",
-        location: "Raopura, Vadodara",
-        severity: "Medium",
-        status: "resolved",
-        date: "Sep 07, 2026",
-        description:
-            "Road surface has deteriorated near the market area."
-    }
-
-];
-
+let reports = [];
+let selectedReportId = null;
+let currentPage = 1;
+const reportsPerPage = 6;
 
 /* =========================================
    DOM
 ========================================= */
 
-const table =
-    document.getElementById("reportsTable");
-
-const searchInput =
-    document.getElementById("searchInput");
-
-const statusFilter =
-    document.getElementById("statusFilter");
-
-const severityFilter =
-    document.getElementById("severityFilter");
-
-const typeFilter =
-    document.getElementById("typeFilter");
-
-const reportCount =
-    document.getElementById("reportCount");
-
-const paginationInfo =
-    document.getElementById("paginationInfo");
-
-const toast =
-    document.getElementById("toast");
-
-const sidebar =
-    document.getElementById("sidebar");
-
-const mobileMenu =
-    document.getElementById("mobileMenu");
-
+const table = document.getElementById("reportsTable");
+const reportSearch = document.getElementById("reportSearch");
+const statusFilter = document.getElementById("statusFilter");
+const severityFilter = document.getElementById("severityFilter");
+const reportCount = document.getElementById("reportCount");
+const paginationInfo = document.getElementById("paginationInfo");
+const sidebar = document.getElementById("sidebar");
+const mobileMenu = document.getElementById("mobileMenu");
+const reportModal = document.getElementById("reportModal");
 
 /* =========================================
-   MODAL ELEMENTS
+   AUTH / ADMIN CHECK
 ========================================= */
 
-const reportModal =
-    document.getElementById("reportModal");
+async function requireAdmin() {
+    const {
+        data: { session },
+        error: sessionError
+    } = await supabaseClient.auth.getSession();
 
-const modalBackdrop =
-    document.getElementById("modalBackdrop");
+    if (sessionError || !session) {
+        window.location.href = "auth.html";
+        return null;
+    }
 
-const closeModal =
-    document.getElementById("closeModal");
+    const { data: profile, error: profileError } = await supabaseClient
+        .from("profiles")
+        .select("role, full_name, email")
+        .eq("id", session.user.id)
+        .single();
 
-const cancelModal =
-    document.getElementById("cancelModal");
+    if (profileError || profile?.role !== "admin") {
+        alert("You do not have permission to access the admin panel.");
+        await supabaseClient.auth.signOut();
+        window.location.href = "index.html";
+        return null;
+    }
 
-const modalTitle =
-    document.getElementById("modalTitle");
+    const adminName = document.querySelector(".admin-info strong");
+    const adminEmail = document.querySelector(".admin-info span");
+    const avatar = document.querySelector(".admin-profile .avatar");
 
-const modalId =
-    document.getElementById("modalId");
+    const name = profile.full_name || session.user.email?.split("@")[0] || "Admin";
+    const initials = name
+        .trim()
+        .split(/\s+/)
+        .slice(0, 2)
+        .map(part => part.charAt(0).toUpperCase())
+        .join("");
 
-const modalType =
-    document.getElementById("modalType");
+    if (adminName) adminName.textContent = name;
+    if (adminEmail) adminEmail.textContent = profile.email || session.user.email || "";
+    if (avatar) avatar.textContent = initials || "AD";
 
-const modalSeverity =
-    document.getElementById("modalSeverity");
-
-const modalLocation =
-    document.getElementById("modalLocation");
-
-const modalDate =
-    document.getElementById("modalDate");
-
-const modalDescription =
-    document.getElementById("modalDescription");
-
-const modalStatus =
-    document.getElementById("modalStatus");
-
-const saveStatus =
-    document.getElementById("saveStatus");
-
-
-let selectedReportId = null;
-
-let currentPage = 1;
-
-const reportsPerPage = 6;
-
+    return session;
+}
 
 /* =========================================
-   STATUS HELPERS
+   REPORT HELPERS
 ========================================= */
+
+function formatIssueType(type) {
+    if (!type) return "Road issue";
+
+    return type
+        .replace(/-/g, " ")
+        .replace(/\b\w/g, char => char.toUpperCase());
+}
+
+function normalizeStatus(status) {
+    const value = String(status || "").trim().toLowerCase();
+
+    if (value === "pending" || value === "submitted") return "pending";
+    if (value === "review" || value === "under review") return "review";
+    if (value === "progress" || value === "in progress") return "progress";
+    if (value === "resolved") return "resolved";
+
+    return "pending";
+}
 
 function getStatusLabel(status) {
-
-    const labels = {
-
+    return {
         pending: "Pending",
-
-        review: "Under review",
-
-        progress: "In progress",
-
+        review: "Under Review",
+        progress: "In Progress",
         resolved: "Resolved"
-
-    };
-
-    return labels[status] || status;
-
+    }[status] || "Pending";
 }
-
 
 function getStatusClass(status) {
-
     return {
-
         pending: "badge-pending",
-
         review: "badge-review",
-
         progress: "badge-progress",
-
         resolved: "badge-resolved"
-
     }[status] || "badge-pending";
-
 }
-
 
 function getSeverityClass(severity) {
+    const value = String(severity || "");
 
     return {
-
         Critical: "severity-critical",
-
         High: "severity-high",
-
         Medium: "severity-medium",
-
         Low: "severity-low"
-
-    }[severity] || "";
-
+    }[value] || "";
 }
 
+function formatDate(dateString) {
+    if (!dateString) return "—";
+
+    const date = new Date(dateString);
+
+    if (Number.isNaN(date.getTime())) return "—";
+
+    return date.toLocaleDateString("en-US", {
+        month: "short",
+        day: "2-digit",
+        year: "numeric"
+    });
+}
+
+function escapeHtml(value) {
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
 
 /* =========================================
-   FILTER REPORTS
+   LOAD REPORTS
+========================================= */
+
+async function loadReports() {
+    const session = await requireAdmin();
+    if (!session) return;
+
+    const { data, error } = await supabaseClient
+        .from("reports")
+        .select(`
+            id,
+            user_id,
+            issue_type,
+            title,
+            description,
+            severity,
+            location_text,
+            latitude,
+            longitude,
+            image_url,
+            status,
+            created_at,
+            updated_at,
+            profiles:user_id (
+                full_name,
+                email
+            )
+        `)
+        .order("created_at", { ascending: false });
+
+    if (error) {
+        console.error("Failed to load admin reports:", error);
+        showToast("Unable to load reports.");
+        return;
+    }
+
+    reports = (data || []).map(report => ({
+        ...report,
+        title: report.title || formatIssueType(report.issue_type),
+        type: formatIssueType(report.issue_type),
+        location: report.location_text || "Location unavailable",
+        severity: report.severity || "Low",
+        status: normalizeStatus(report.status),
+        reporter: report.profiles?.full_name || report.profiles?.email || "Unknown user",
+        reporterEmail: report.profiles?.email || "",
+        date: formatDate(report.created_at),
+        description: report.description || "No description provided."
+    }));
+
+    currentPage = 1;
+    updateStatistics();
+    renderReports();
+    updateRecentReports();
+}
+
+/* =========================================
+   FILTERING
 ========================================= */
 
 function getFilteredReports() {
-
-    const search =
-        searchInput.value
-            .trim()
-            .toLowerCase();
-
-
-    const status =
-        statusFilter.value;
-
-
-    const severity =
-        severityFilter.value;
-
-
-    const type =
-        typeFilter.value;
-
+    const search = reportSearch?.value.trim().toLowerCase() || "";
+    const status = statusFilter?.value || "all";
+    const severity = severityFilter?.value || "all";
 
     return reports.filter(report => {
+        const searchable = [
+            report.id,
+            report.title,
+            report.type,
+            report.location,
+            report.reporter,
+            report.reporterEmail
+        ]
+            .filter(Boolean)
+            .join(" ")
+            .toLowerCase();
 
-        const matchesSearch =
-            !search ||
-            report.id.toLowerCase().includes(search) ||
-            report.title.toLowerCase().includes(search) ||
-            report.location.toLowerCase().includes(search) ||
-            report.type.toLowerCase().includes(search);
-
-
-        const matchesStatus =
-            status === "all" ||
-            report.status === status;
-
-
+        const matchesSearch = !search || searchable.includes(search);
+        const matchesStatus = status === "all" || report.status === status;
         const matchesSeverity =
             severity === "all" ||
-            report.severity === severity;
+            String(report.severity).toLowerCase() === severity.toLowerCase();
 
-
-        const matchesType =
-            type === "all" ||
-            report.type === type;
-
-
-        return (
-            matchesSearch &&
-            matchesStatus &&
-            matchesSeverity &&
-            matchesType
-        );
-
+        return matchesSearch && matchesStatus && matchesSeverity;
     });
-
 }
-
 
 /* =========================================
    RENDER REPORTS
 ========================================= */
 
 function renderReports() {
+    if (!table) return;
 
-    const filtered =
-        getFilteredReports();
+    const filtered = getFilteredReports();
+    const totalPages = Math.max(1, Math.ceil(filtered.length / reportsPerPage));
 
+    if (currentPage > totalPages) currentPage = totalPages;
 
-    const start =
-        (currentPage - 1) *
-        reportsPerPage;
-
-
-    const end =
-        start + reportsPerPage;
-
-
-    const visible =
-        filtered.slice(start, end);
-
+    const start = (currentPage - 1) * reportsPerPage;
+    const visible = filtered.slice(start, start + reportsPerPage);
 
     table.innerHTML = "";
 
-
     if (!visible.length) {
-
         table.innerHTML = `
+            <tr>
+                <td colspan="7" style="text-align:center;padding:45px 20px;color:#687671;">
+                    No reports found.
+                </td>
+            </tr>
+        `;
 
-      <tr>
-
-        <td colspan="7"
-          style="
-            text-align:center;
-            padding:45px 20px;
-            color:#687671;
-          ">
-
-          No reports found.
-
-        </td>
-
-      </tr>
-
-    `;
-
-        reportCount.textContent =
-            "0 reports";
-
-        paginationInfo.textContent =
-            "No matching reports";
-
+        if (reportCount) reportCount.textContent = "0 reports";
+        if (paginationInfo) paginationInfo.textContent = "No matching reports";
         return;
-
     }
 
-
     visible.forEach(report => {
-
-        const row =
-            document.createElement("tr");
-
+        const row = document.createElement("tr");
 
         row.innerHTML = `
-
-      <td>
-
-        <span class="report-id">
-          ${report.id}
-        </span>
-
-      </td>
-
-
-      <td>
-
-        <div class="issue-cell">
-
-          <strong>
-            ${report.title}
-          </strong>
-
-          <span>
-            ${report.type}
-          </span>
-
-        </div>
-
-      </td>
-
-
-      <td>
-
-        <span class="location-cell">
-          ${report.location}
-        </span>
-
-      </td>
-
-
-      <td>
-
-        <span
-          class="severity ${getSeverityClass(report.severity)}">
-
-          ${report.severity}
-
-        </span>
-
-      </td>
-
-
-      <td>
-
-        <span
-          class="badge ${getStatusClass(report.status)}">
-
-          ${getStatusLabel(report.status)}
-
-        </span>
-
-      </td>
-
-
-      <td>
-        ${report.date}
-      </td>
-
-
-      <td>
-
-        <button
-          class="view-report"
-          data-report-id="${report.id}">
-
-          View →
-
-        </button>
-
-      </td>
-
-    `;
-
+            <td>
+                <span class="report-id">${escapeHtml(report.id)}</span>
+            </td>
+            <td>
+                <div class="issue-cell">
+                    <strong>${escapeHtml(report.title)}</strong>
+                    <span>${escapeHtml(report.type)}</span>
+                </div>
+            </td>
+            <td>
+                <span class="location-cell">${escapeHtml(report.location)}</span>
+            </td>
+            <td>
+                <span class="severity ${getSeverityClass(report.severity)}">
+                    ${escapeHtml(report.severity)}
+                </span>
+            </td>
+            <td>
+                <span class="badge ${getStatusClass(report.status)}">
+                    ${getStatusLabel(report.status)}
+                </span>
+            </td>
+            <td>${escapeHtml(report.date)}</td>
+            <td>
+                <button class="view-report" data-report-id="${escapeHtml(report.id)}">
+                    View →
+                </button>
+            </td>
+        `;
 
         table.appendChild(row);
-
     });
 
+    if (reportCount) {
+        reportCount.textContent = `${filtered.length} ${filtered.length === 1 ? "report" : "reports"}`;
+    }
 
-    reportCount.textContent =
-        `${filtered.length} ${filtered.length === 1
-            ? "report"
-            : "reports"
-        }`;
-
-
-    paginationInfo.textContent =
-
-        `Showing ${start + 1
-        }–${Math.min(end, filtered.length)
-        } of ${filtered.length
-        } reports`;
-
-
-    document
-        .querySelectorAll(".view-report")
-        .forEach(button => {
-
-            button.addEventListener(
-                "click",
-                () => {
-
-                    openReport(
-                        button.dataset.reportId
-                    );
-
-                }
-            );
-
-        });
-
+    if (paginationInfo) {
+        paginationInfo.textContent =
+            `Showing ${start + 1}–${Math.min(start + visible.length, filtered.length)} of ${filtered.length} reports`;
+    }
 }
 
-
 /* =========================================
-   OPEN REPORT MODAL
+   REPORT MODAL
 ========================================= */
 
 function openReport(id) {
-
-    const report =
-        reports.find(
-            item => item.id === id
-        );
-
-
+    const report = reports.find(item => item.id === id);
     if (!report) return;
 
+    selectedReportId = report.id;
 
-    selectedReportId =
-        report.id;
+    const setText = (elementId, value) => {
+        const element = document.getElementById(elementId);
+        if (element) element.textContent = value || "—";
+    };
 
+    setText("modalId", report.id);
+    setText("modalIssue", report.title);
+    setText("modalLocation", report.location);
+    setText("modalReporter", report.reporter);
+    setText("modalSeverity", report.severity);
+    setText("modalStatus", getStatusLabel(report.status));
 
-    modalTitle.textContent =
-        report.title;
+    const select = document.getElementById("updateStatus");
+    if (select) select.value = report.status;
 
-
-    modalId.textContent =
-        report.id;
-
-
-    modalType.textContent =
-        report.type;
-
-
-    modalSeverity.textContent =
-        report.severity;
-
-
-    modalLocation.textContent =
-        report.location;
-
-
-    modalDate.textContent =
-        report.date;
-
-
-    modalDescription.textContent =
-        report.description;
-
-
-    modalStatus.value =
-        report.status;
-
-
-    reportModal.classList.add("open");
-
-    reportModal.setAttribute(
-        "aria-hidden",
-        "false"
-    );
-
-
-    document.body.style.overflow =
-        "hidden";
-
+    reportModal?.classList.add("open");
 }
 
-
-/* =========================================
-   CLOSE MODAL
-========================================= */
-
-function closeReportModal() {
-
-    reportModal.classList.remove(
-        "open"
-    );
-
-
-    reportModal.setAttribute(
-        "aria-hidden",
-        "true"
-    );
-
-
-    document.body.style.overflow =
-        "";
-
+function closeReport() {
+    reportModal?.classList.remove("open");
+    selectedReportId = null;
 }
 
-
-closeModal.addEventListener(
-    "click",
-    closeReportModal
-);
-
-
-cancelModal.addEventListener(
-    "click",
-    closeReportModal
-);
-
-
-modalBackdrop.addEventListener(
-    "click",
-    closeReportModal
-);
-
-
-document.addEventListener(
-    "keydown",
-    event => {
-
-        if (
-            event.key === "Escape" &&
-            reportModal.classList.contains("open")
-        ) {
-
-            closeReportModal();
-
-        }
-
-    }
-);
-
-
 /* =========================================
-   SAVE STATUS
+   UPDATE REPORT STATUS — REAL SUPABASE UPDATE
 ========================================= */
 
-saveStatus.addEventListener(
-    "click",
-    () => {
+async function updateReportStatus() {
+    if (!selectedReportId) return;
 
-        const report =
-            reports.find(
-                item =>
-                    item.id === selectedReportId
-            );
+    const newStatus = document.getElementById("updateStatus")?.value;
+    if (!newStatus) return;
 
+    const session = await requireAdmin();
+    if (!session) return;
 
-        if (!report) return;
+    const button = document.querySelector('#reportModal .btn-primary');
+    if (button) button.disabled = true;
 
+    const { data, error } = await supabaseClient
+        .from("reports")
+        .update({
+            status: newStatus,
+            updated_at: new Date().toISOString()
+        })
+        .eq("id", selectedReportId)
+        .select()
+        .single();
 
-        report.status =
-            modalStatus.value;
+    if (button) button.disabled = false;
 
-
-        renderReports();
-
-        updateStatistics();
-
-
-        closeReportModal();
-
-
-        showToast(
-            `${report.id} status updated successfully ✓`
-        );
-
+    if (error) {
+        console.error("Failed to update report status:", error);
+        showToast("Unable to update report status.");
+        return;
     }
-);
 
+    const index = reports.findIndex(report => report.id === selectedReportId);
+
+    if (index !== -1 && data) {
+        reports[index] = {
+            ...reports[index],
+            ...data,
+            status: normalizeStatus(data.status),
+            date: formatDate(data.created_at)
+        };
+    }
+
+    showToast(`${selectedReportId} updated to ${getStatusLabel(newStatus)} ✓`);
+
+    closeReport();
+    updateStatistics();
+    renderReports();
+    updateRecentReports();
+}
 
 /* =========================================
    STATISTICS
 ========================================= */
 
 function updateStatistics() {
+    const total = reports.length;
+    const pending = reports.filter(report => report.status === "pending" || report.status === "review").length;
+    const progress = reports.filter(report => report.status === "progress").length;
+    const resolved = reports.filter(report => report.status === "resolved").length;
 
-    const total =
-        reports.length;
+    const values = { total, pending, progress, resolved };
 
+    Object.entries(values).forEach(([key, value]) => {
+        const element = document.querySelector(`[data-stat="${key}"]`);
+        if (element) animateNumber(element, value);
+    });
 
-    const pending =
-        reports.filter(
-            report =>
-                report.status === "pending"
-        ).length;
-
-
-    const progress =
-        reports.filter(
-            report =>
-                report.status === "progress"
-        ).length;
-
-
-    const resolved =
-        reports.filter(
-            report =>
-                report.status === "resolved"
-        ).length;
-
-
-    animateNumber(
-        document.querySelector(
-            '[data-stat="total"]'
-        ),
-        total
-    );
-
-
-    animateNumber(
-        document.querySelector(
-            '[data-stat="pending"]'
-        ),
-        pending
-    );
-
-
-    animateNumber(
-        document.querySelector(
-            '[data-stat="progress"]'
-        ),
-        progress
-    );
-
-
-    animateNumber(
-        document.querySelector(
-            '[data-stat="resolved"]'
-        ),
-        resolved
-    );
-
+    const totalText = document.querySelector("#dashboardTotalReports");
+    if (totalText) totalText.textContent = total.toLocaleString();
 }
 
+function animateNumber(element, target) {
+    if (!element) return;
 
-/* =========================================
-   NUMBER ANIMATION
-========================================= */
-
-function animateNumber(
-    element,
-    target
-) {
-
-    const duration = 800;
-
-    const startTime =
-        performance.now();
-
+    const duration = 500;
+    const start = performance.now();
+    const from = Number(element.textContent.replace(/,/g, "")) || 0;
 
     function update(now) {
+        const progress = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const value = Math.round(from + (target - from) * eased);
 
-        const progress =
-            Math.min(
-                (now - startTime) /
-                duration,
-                1
-            );
+        element.textContent = value.toLocaleString();
 
-
-        const eased =
-            1 -
-            Math.pow(
-                1 - progress,
-                3
-            );
-
-
-        const value =
-            Math.floor(
-                target * eased
-            );
-
-
-        element.textContent =
-            value.toLocaleString();
-
-
-        if (progress < 1) {
-
-            requestAnimationFrame(
-                update
-            );
-
-        }
-
+        if (progress < 1) requestAnimationFrame(update);
     }
 
-
-    requestAnimationFrame(
-        update
-    );
-
+    requestAnimationFrame(update);
 }
 
+/* =========================================
+   RECENT REPORTS
+========================================= */
+
+function updateRecentReports() {
+    const container = document.querySelector(".report-list");
+    if (!container) return;
+
+    const recent = reports.slice(0, 3);
+
+    container.innerHTML = recent.length
+        ? recent.map(report => `
+            <div class="report-item">
+                <div class="report-thumb">◉</div>
+                <div class="report-info">
+                    <strong>${escapeHtml(report.title)}</strong>
+                    <p>${escapeHtml(report.location)}</p>
+                </div>
+                <span class="status ${report.status === "review" ? "progress" : report.status}">
+                    ${escapeHtml(getStatusLabel(report.status))}
+                </span>
+            </div>
+        `).join("")
+        : `<div style="padding:24px;color:#718077;">No reports yet.</div>`;
+}
 
 /* =========================================
    FILTER EVENTS
 ========================================= */
 
-[
-    searchInput,
-    statusFilter,
-    severityFilter,
-    typeFilter
-].forEach(element => {
-
-    element.addEventListener(
-        "input",
-        () => {
-
-            currentPage = 1;
-
-            renderReports();
-
-        }
-    );
-
+reportSearch?.addEventListener("input", () => {
+    currentPage = 1;
+    renderReports();
 });
 
+statusFilter?.addEventListener("change", () => {
+    currentPage = 1;
+    renderReports();
+});
+
+severityFilter?.addEventListener("change", () => {
+    currentPage = 1;
+    renderReports();
+});
 
 /* =========================================
    PAGINATION
 ========================================= */
 
-document
-    .getElementById("prevPage")
-    ?.addEventListener(
-        "click",
-        () => {
-
-            if (currentPage > 1) {
-
-                currentPage--;
-
-                renderReports();
-
-            }
-
-        }
-    );
-
-
-document
-    .getElementById("nextPage")
-    ?.addEventListener(
-        "click",
-        () => {
-
-            const totalPages =
-                Math.ceil(
-                    getFilteredReports().length /
-                    reportsPerPage
-                );
-
-
-            if (
-                currentPage <
-                totalPages
-            ) {
-
-                currentPage++;
-
-                renderReports();
-
-            }
-
-        }
-    );
-
-
-/* =========================================
-   ALL REPORTS BUTTON
-========================================= */
-
-document
-    .getElementById("allReportsBtn")
-    ?.addEventListener(
-        "click",
-        () => {
-
-            document
-                .getElementById("reports")
-                ?.scrollIntoView({
-                    behavior: "smooth"
-                });
-
-        }
-    );
-
-
-/* =========================================
-   SIDEBAR NAVIGATION
-========================================= */
-
-document
-    .querySelectorAll(".sidebar-link")
-    .forEach(link => {
-
-        link.addEventListener(
-            "click",
-            event => {
-
-                event.preventDefault();
-
-
-                document
-                    .querySelectorAll(
-                        ".sidebar-link"
-                    )
-                    .forEach(item =>
-                        item.classList.remove(
-                            "active"
-                        )
-                    );
-
-
-                link.classList.add(
-                    "active"
-                );
-
-
-                const section =
-                    link.dataset.section;
-
-
-                const target =
-                    document.getElementById(
-                        section
-                    );
-
-
-                if (target) {
-
-                    target.scrollIntoView({
-                        behavior: "smooth"
-                    });
-
-                }
-
-
-                if (
-                    window.innerWidth <= 850
-                ) {
-
-                    sidebar.classList.remove(
-                        "open"
-                    );
-
-                }
-
-            }
-        );
-
-    });
-
-
-/* =========================================
-   MOBILE SIDEBAR
-========================================= */
-
-mobileMenu?.addEventListener(
-    "click",
-    () => {
-
-        sidebar.classList.toggle(
-            "open"
-        );
-
+document.getElementById("prevPage")?.addEventListener("click", () => {
+    if (currentPage > 1) {
+        currentPage--;
+        renderReports();
     }
-);
+});
 
+document.getElementById("nextPage")?.addEventListener("click", () => {
+    const totalPages = Math.max(1, Math.ceil(getFilteredReports().length / reportsPerPage));
+
+    if (currentPage < totalPages) {
+        currentPage++;
+        renderReports();
+    }
+});
+
+/* =========================================
+   DYNAMIC REPORT BUTTON HANDLER
+========================================= */
+
+table?.addEventListener("click", event => {
+    const button = event.target.closest(".view-report");
+    if (!button) return;
+
+    openReport(button.dataset.reportId);
+});
 
 /* =========================================
    REFRESH
 ========================================= */
 
-document
-    .getElementById("refreshBtn")
-    ?.addEventListener(
-        "click",
-        event => {
+document.getElementById("refreshBtn")?.addEventListener("click", async event => {
+    const button = event.currentTarget;
+    button.style.transform = "rotate(360deg)";
 
-            const button =
-                event.currentTarget;
+    setTimeout(() => {
+        button.style.transform = "";
+    }, 500);
 
-
-            button.style.transform =
-                "rotate(360deg)";
-
-
-            setTimeout(() => {
-
-                button.style.transform =
-                    "";
-
-            }, 500);
-
-
-            renderReports();
-
-            updateStatistics();
-
-
-            showToast(
-                "Dashboard data refreshed ✓"
-            );
-
-        }
-    );
-
+    await loadReports();
+    showToast("Dashboard data refreshed ✓");
+});
 
 /* =========================================
-   NOTIFICATIONS
+   MOBILE SIDEBAR
 ========================================= */
 
-document
-    .getElementById(
-        "notificationsBtn"
-    )
-    ?.addEventListener(
-        "click",
-        () => {
-
-            showToast(
-                "No new critical notifications"
-            );
-
-        }
-    );
-
+mobileMenu?.addEventListener("click", () => {
+    sidebar?.classList.toggle("open");
+});
 
 /* =========================================
-   EXPORT CSV
+   SIDEBAR NAVIGATION
 ========================================= */
 
-document
-    .getElementById("exportBtn")
-    ?.addEventListener(
-        "click",
-        () => {
+document.querySelectorAll(".nav-item").forEach(button => {
+    button.addEventListener("click", () => {
+        const viewName = button.dataset.view;
+        document.querySelectorAll(".view").forEach(view => view.classList.remove("active"));
+        document.getElementById(viewName)?.classList.add("active");
 
-            const headers = [
+        document.querySelectorAll(".nav-item").forEach(item => {
+            item.classList.toggle("active", item === button);
+        });
 
-                "Report ID",
-                "Issue",
-                "Type",
-                "Location",
-                "Severity",
-                "Status",
-                "Date"
+        const pageTitles = {
+            dashboard: "Dashboard",
+            reports: "Reports",
+            analytics: "Analytics",
+            users: "Users",
+            settings: "Settings"
+        };
 
-            ];
-
-
-            const rows =
-                reports.map(report => [
-
-                    report.id,
-
-                    report.title,
-
-                    report.type,
-
-                    report.location,
-
-                    report.severity,
-
-                    getStatusLabel(
-                        report.status
-                    ),
-
-                    report.date
-
-                ]);
-
-
-            const csv = [
-
-                headers,
-
-                ...rows
-
-            ]
-                .map(row =>
-                    row
-                        .map(value =>
-                            `"${String(value)
-                                .replace(/"/g, '""')}"`
-                        )
-                        .join(",")
-                )
-                .join("\n");
-
-
-            const blob =
-                new Blob(
-                    [csv],
-                    {
-                        type:
-                            "text/csv;charset=utf-8;"
-                    }
-                );
-
-
-            const url =
-                URL.createObjectURL(
-                    blob
-                );
-
-
-            const link =
-                document.createElement(
-                    "a"
-                );
-
-
-            link.href = url;
-
-            link.download =
-                "roadlens-reports.csv";
-
-
-            link.click();
-
-
-            URL.revokeObjectURL(
-                url
-            );
-
-
-            showToast(
-                "Report data exported ✓"
-            );
-
-        }
-    );
-
+        const pageTitle = document.getElementById("pageTitle");
+        if (pageTitle) pageTitle.textContent = pageTitles[viewName] || "Dashboard";
+    });
+});
 
 /* =========================================
    TOAST
 ========================================= */
 
-let toastTimer;
-
-
 function showToast(message) {
+    const toast = document.getElementById("toast");
+    if (!toast) return;
 
-    toast.textContent =
-        message;
+    toast.textContent = message;
+    toast.classList.add("show");
 
-
-    toast.classList.add(
-        "show"
-    );
-
-
-    clearTimeout(
-        toastTimer
-    );
-
-
-    toastTimer =
-        setTimeout(() => {
-
-            toast.classList.remove(
-                "show"
-            );
-
-        }, 2800);
-
+    clearTimeout(showToast.timer);
+    showToast.timer = setTimeout(() => {
+        toast.classList.remove("show");
+    }, 3000);
 }
 
+/* =========================================
+   CLOSE MODAL EVENTS
+========================================= */
+
+document.getElementById("closeModal")?.addEventListener("click", closeReport);
+document.getElementById("cancelModal")?.addEventListener("click", closeReport);
+document.getElementById("modalBackdrop")?.addEventListener("click", closeReport);
+
+document.addEventListener("keydown", event => {
+    if (event.key === "Escape" && reportModal?.classList.contains("open")) {
+        closeReport();
+    }
+});
 
 /* =========================================
    INITIALIZE
 ========================================= */
 
-renderReports();
-
-updateStatistics();
+loadReports();
