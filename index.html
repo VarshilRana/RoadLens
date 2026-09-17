@@ -2127,6 +2127,58 @@
       }
 
     }
+
+    .user-menu {
+      position: relative;
+    }
+
+    .user-dropdown {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 50px;
+      width: 220px;
+      padding: 12px;
+      background: white;
+      border: 1px solid rgba(30, 107, 82, 0.12);
+      border-radius: 14px;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+      z-index: 1000;
+    }
+
+    .user-dropdown.show {
+      display: block;
+    }
+
+    .user-dropdown-name {
+      font-weight: 700;
+      margin-bottom: 3px;
+    }
+
+    .user-dropdown-email {
+      font-size: 12px;
+      color: #777;
+      margin-bottom: 10px;
+      word-break: break-word;
+    }
+
+    .user-dropdown button {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      padding: 10px;
+      text-align: left;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .user-dropdown button:hover {
+      background: #f2f5f3;
+    }
+
+    .user-dropdown .logout-btn {
+      color: #c0392b;
+    }
   </style>
 </head>
 
@@ -2705,15 +2757,29 @@
       if (!authNav) return;
 
       const {
-        data: { session }
+        data: { session },
+        error
       } = await supabaseClient.auth.getSession();
+
+      if (error) {
+        console.error("Session error:", error);
+
+        authNav.innerHTML = `
+      <button class="btn btn-ghost" onclick="window.location.href='auth.html'">
+        Sign in
+      </button>
+    `;
+
+        return;
+      }
 
       if (!session) {
         authNav.innerHTML = `
-        <button class="btn btn-ghost" onclick="window.location.href='auth.html'">
-          Sign in
-        </button>
-      `;
+      <button class="btn btn-ghost" onclick="window.location.href='auth.html'">
+        Sign in
+      </button>
+    `;
+
         return;
       }
 
@@ -2730,13 +2796,46 @@
         .join("");
 
       authNav.innerHTML = `
+    <div class="user-menu">
       <button
         class="user-avatar"
-        onclick="window.location.href='profile.html'"
+        onclick="toggleUserMenu()"
         title="${fullName}">
         ${initials}
       </button>
-    `;
+
+      <div id="userDropdown" class="user-dropdown">
+        <div class="user-dropdown-name">${fullName}</div>
+        <div class="user-dropdown-email">${session.user.email}</div>
+
+        <button onclick="window.location.href='profile.html'">
+          Profile
+        </button>
+
+        <button onclick="logoutUser()" class="logout-btn">
+          Log out
+        </button>
+      </div>
+    </div>
+  `;
+    }
+    function toggleUserMenu() {
+      const dropdown = document.getElementById("userDropdown");
+
+      if (!dropdown) return;
+
+      dropdown.classList.toggle("show");
+    }
+    async function logoutUser() {
+      const { error } = await supabaseClient.auth.signOut();
+
+      if (error) {
+        console.error("Logout error:", error);
+        showToast("Unable to log out.");
+        return;
+      }
+
+      window.location.href = "index.html";
     }
 
     updateAuthNav();
