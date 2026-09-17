@@ -1,0 +1,1383 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>RoadLens — Sign In</title>
+
+    <style>
+        /* =========================================================
+           ROADLENS AUTH PAGE
+           Same visual language as main RoadLens website
+        ========================================================= */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #f5f7f4;
+            --surface: #ffffff;
+            --surface-soft: #eef3ef;
+            --text: #18211c;
+            --text-soft: #68736c;
+            --border: #dfe6e1;
+            --primary: #1d6b4f;
+            --primary-dark: #15533d;
+            --primary-soft: #e3efe9;
+            --danger: #c94a4a;
+            --shadow: 0 20px 60px rgba(31, 52, 42, 0.10);
+        }
+
+        body {
+            font-family:
+                Inter,
+                ui-sans-serif,
+                system-ui,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* =========================================================
+           BACKGROUND
+        ========================================================= */
+
+        .page {
+            min-height: 100vh;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .background-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            pointer-events: none;
+            opacity: 0.45;
+            z-index: 0;
+        }
+
+        .orb-one {
+            width: 320px;
+            height: 320px;
+            background: rgba(29, 107, 79, 0.12);
+            top: -100px;
+            left: -100px;
+        }
+
+        .orb-two {
+            width: 280px;
+            height: 280px;
+            background: rgba(91, 145, 117, 0.10);
+            right: -100px;
+            bottom: -80px;
+        }
+
+        /* =========================================================
+           NAVBAR
+        ========================================================= */
+
+        header {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            padding: 24px 6%;
+        }
+
+        .navbar {
+            max-width: 1400px;
+            margin: auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 800;
+            font-size: 22px;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-mark {
+            width: 38px;
+            height: 38px;
+            border-radius: 11px;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            box-shadow: 0 8px 20px rgba(29, 107, 79, 0.20);
+        }
+
+        .back-home {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: var(--text-soft);
+            font-size: 14px;
+            font-weight: 600;
+            padding: 10px 15px;
+            border-radius: 10px;
+            transition: 0.25s ease;
+        }
+
+        .back-home:hover {
+            color: var(--primary);
+            background: var(--surface);
+        }
+
+        /* =========================================================
+           MAIN
+        ========================================================= */
+
+        .auth-main {
+            position: relative;
+            z-index: 2;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 35px 20px 70px;
+        }
+
+        .auth-wrapper {
+            width: 100%;
+            max-width: 1050px;
+            display: grid;
+            grid-template-columns: 0.9fr 1.1fr;
+            background: rgba(255, 255, 255, 0.72);
+            border: 1px solid rgba(223, 230, 225, 0.9);
+            border-radius: 28px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(18px);
+        }
+
+        /* =========================================================
+           LEFT PANEL
+        ========================================================= */
+
+        .auth-info {
+            padding: 55px 48px;
+            background:
+                linear-gradient(145deg,
+                    #e8f1ec 0%,
+                    #f4f7f4 55%,
+                    #e9f1ed 100%);
+
+            position: relative;
+            overflow: hidden;
+        }
+
+        .auth-info::after {
+            content: "";
+            position: absolute;
+            width: 240px;
+            height: 240px;
+            border-radius: 50%;
+            border: 1px solid rgba(29, 107, 79, 0.10);
+            right: -100px;
+            bottom: -100px;
+        }
+
+        .info-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 100px;
+            background: rgba(255, 255, 255, 0.75);
+            border: 1px solid rgba(29, 107, 79, 0.10);
+            color: var(--primary);
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 25px;
+        }
+
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--primary);
+        }
+
+        .auth-info h1 {
+            font-size: clamp(32px, 4vw, 48px);
+            line-height: 1.05;
+            letter-spacing: -1.8px;
+            margin-bottom: 20px;
+            max-width: 420px;
+        }
+
+        .auth-info h1 span {
+            color: var(--primary);
+        }
+
+        .auth-info>p {
+            color: var(--text-soft);
+            font-size: 15px;
+            line-height: 1.7;
+            max-width: 410px;
+        }
+
+        /* Feature cards */
+
+        .auth-features {
+            margin-top: 38px;
+            display: flex;
+            flex-direction: column;
+            gap: 13px;
+        }
+
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+        }
+
+        .feature-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 11px;
+            background: rgba(255, 255, 255, 0.85);
+            border: 1px solid rgba(29, 107, 79, 0.09);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .feature-text strong {
+            display: block;
+            font-size: 13px;
+            margin-bottom: 2px;
+        }
+
+        .feature-text span {
+            color: var(--text-soft);
+            font-size: 12px;
+        }
+
+        /* =========================================================
+           RIGHT FORM
+        ========================================================= */
+
+        .auth-form-section {
+            padding: 52px 55px;
+            background: rgba(255, 255, 255, 0.88);
+            display: flex;
+            align-items: center;
+        }
+
+        .auth-form-container {
+            width: 100%;
+            max-width: 440px;
+            margin: auto;
+        }
+
+        .form-heading {
+            margin-bottom: 30px;
+        }
+
+        .form-heading h2 {
+            font-size: 28px;
+            letter-spacing: -0.8px;
+            margin-bottom: 8px;
+        }
+
+        .form-heading p {
+            color: var(--text-soft);
+            font-size: 14px;
+        }
+
+        /* Tabs */
+
+        .auth-tabs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            padding: 4px;
+            background: var(--surface-soft);
+            border-radius: 12px;
+            margin-bottom: 28px;
+        }
+
+        .auth-tab {
+            border: none;
+            background: transparent;
+            padding: 11px;
+            border-radius: 9px;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-soft);
+            cursor: pointer;
+            transition: 0.25s ease;
+        }
+
+        .auth-tab.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 3px 12px rgba(20, 50, 35, 0.08);
+        }
+
+        /* Forms */
+
+        .form-panel {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .form-panel.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(7px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #8b968f;
+            font-size: 15px;
+            pointer-events: none;
+        }
+
+        .form-input {
+            width: 100%;
+            height: 48px;
+            border: 1px solid var(--border);
+            border-radius: 11px;
+            background: #fbfcfb;
+            padding: 0 44px;
+            font-size: 14px;
+            color: var(--text);
+            outline: none;
+            transition: 0.2s ease;
+        }
+
+        .form-input::placeholder {
+            color: #a1aaa4;
+        }
+
+        .form-input:focus {
+            border-color: rgba(29, 107, 79, 0.55);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(29, 107, 79, 0.08);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            color: #8b968f;
+            font-size: 14px;
+            padding: 5px;
+        }
+
+        .password-toggle:hover {
+            color: var(--primary);
+        }
+
+        /* Options */
+
+        .form-options {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 4px 0 22px;
+        }
+
+        .remember {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-soft);
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .remember input {
+            accent-color: var(--primary);
+        }
+
+        .forgot {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .forgot:hover {
+            text-decoration: underline;
+        }
+
+        /* Submit button */
+
+        .submit-btn {
+            width: 100%;
+            height: 49px;
+            border: none;
+            border-radius: 11px;
+            background: var(--primary);
+            color: white;
+            font-size: 14px;
+            font-weight: 750;
+            cursor: pointer;
+            transition:
+                transform 0.2s ease,
+                background 0.2s ease,
+                box-shadow 0.2s ease;
+
+            box-shadow: 0 8px 20px rgba(29, 107, 79, 0.16);
+        }
+
+        .submit-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 12px 25px rgba(29, 107, 79, 0.20);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Terms */
+
+        .terms {
+            margin-top: 18px;
+            text-align: center;
+            color: #8a938e;
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        .terms a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* Password strength */
+
+        .password-strength {
+            margin-top: 8px;
+            display: none;
+        }
+
+        .strength-bars {
+            display: flex;
+            gap: 4px;
+        }
+
+        .strength-bar {
+            height: 3px;
+            flex: 1;
+            background: #e3e8e4;
+            border-radius: 10px;
+            transition: 0.2s ease;
+        }
+
+        .strength-text {
+            display: block;
+            margin-top: 5px;
+            font-size: 10px;
+            color: var(--text-soft);
+        }
+
+        /* Error */
+
+        .field-error {
+            display: none;
+            color: var(--danger);
+            font-size: 11px;
+            margin-top: 6px;
+        }
+
+        .field-error.show {
+            display: block;
+        }
+
+        .form-input.error {
+            border-color: rgba(201, 74, 74, 0.5);
+        }
+
+        /* =========================================================
+           TOAST
+        ========================================================= */
+
+        .toast {
+            position: fixed;
+            right: 25px;
+            bottom: 25px;
+            z-index: 100;
+            padding: 13px 18px;
+            border-radius: 11px;
+            background: #18211c;
+            color: white;
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+            transform: translateY(20px);
+            opacity: 0;
+            pointer-events: none;
+            transition: 0.3s ease;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* =========================================================
+           RESPONSIVE
+        ========================================================= */
+
+        @media (max-width: 850px) {
+
+            .auth-wrapper {
+                grid-template-columns: 1fr;
+                max-width: 550px;
+            }
+
+            .auth-info {
+                display: none;
+            }
+
+            .auth-form-section {
+                padding: 45px 35px;
+            }
+        }
+
+        @media (max-width: 500px) {
+
+            header {
+                padding: 18px 20px;
+            }
+
+            .logo {
+                font-size: 19px;
+            }
+
+            .logo-mark {
+                width: 34px;
+                height: 34px;
+            }
+
+            .back-home {
+                font-size: 12px;
+                padding: 8px;
+            }
+
+            .auth-main {
+                padding: 15px 12px 35px;
+            }
+
+            .auth-wrapper {
+                border-radius: 20px;
+            }
+
+            .auth-form-section {
+                padding: 32px 22px;
+            }
+
+            .form-heading h2 {
+                font-size: 25px;
+            }
+
+            .form-options {
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .toast {
+                left: 15px;
+                right: 15px;
+                bottom: 15px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="page">
+
+        <div class="background-orb orb-one"></div>
+        <div class="background-orb orb-two"></div>
+
+        <!-- =========================================================
+         HEADER
+    ========================================================== -->
+
+        <header>
+            <nav class="navbar">
+
+                <a href="index.html" class="logo">
+                    <div class="logo-mark">⌁</div>
+                    RoadLens
+                </a>
+
+                <a href="index.html" class="back-home">
+                    ← Back to website
+                </a>
+
+            </nav>
+        </header>
+
+
+        <!-- =========================================================
+         AUTH MAIN
+    ========================================================== -->
+
+        <main class="auth-main">
+
+            <div class="auth-wrapper">
+
+                <!-- =================================================
+                 LEFT BRAND PANEL
+            ================================================== -->
+
+                <section class="auth-info">
+
+                    <div class="info-badge">
+                        <span class="status-dot"></span>
+                        Civic infrastructure platform
+                    </div>
+
+                    <h1>
+                        Better roads start with
+                        <span>better reporting.</span>
+                    </h1>
+
+                    <p>
+                        Join RoadLens and help identify, track and improve
+                        road infrastructure in your community.
+                    </p>
+
+
+                    <div class="auth-features">
+
+                        <div class="feature">
+
+                            <div class="feature-icon">
+                                ⌖
+                            </div>
+
+                            <div class="feature-text">
+                                <strong>Report road issues</strong>
+                                <span>Submit problems with location and photos.</span>
+                            </div>
+
+                        </div>
+
+
+                        <div class="feature">
+
+                            <div class="feature-icon">
+                                ✓
+                            </div>
+
+                            <div class="feature-text">
+                                <strong>Track your reports</strong>
+                                <span>Follow the progress of every issue.</span>
+                            </div>
+
+                        </div>
+
+
+                        <div class="feature">
+
+                            <div class="feature-icon">
+                                ◉
+                            </div>
+
+                            <div class="feature-text">
+                                <strong>Make an impact</strong>
+                                <span>Help create safer and better roads.</span>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                 FORM SECTION
+            ================================================== -->
+
+                <section class="auth-form-section">
+
+                    <div class="auth-form-container">
+
+                        <div class="form-heading">
+
+                            <h2 id="formTitle">
+                                Welcome back
+                            </h2>
+
+                            <p id="formSubtitle">
+                                Sign in to continue to your RoadLens account.
+                            </p>
+
+                        </div>
+
+
+                        <!-- TABS -->
+
+                        <div class="auth-tabs">
+
+                            <button class="auth-tab active" id="signInTab" onclick="switchAuth('signin')">
+                                Sign In
+                            </button>
+
+                            <button class="auth-tab" id="signUpTab" onclick="switchAuth('signup')">
+                                Create Account
+                            </button>
+
+                        </div>
+
+
+                        <!-- =================================================
+                         SIGN IN
+                    ================================================== -->
+
+                        <form id="signInForm" class="form-panel active" onsubmit="handleSignIn(event)">
+
+                            <div class="form-group">
+
+                                <label class="form-label">
+                                    Email address
+                                </label>
+
+                                <div class="input-wrapper">
+
+                                    <span class="input-icon">
+                                        @
+                                    </span>
+
+                                    <input type="email" id="loginEmail" class="form-input" placeholder="you@example.com"
+                                        required>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label class="form-label">
+                                    Password
+                                </label>
+
+                                <div class="input-wrapper">
+
+                                    <span class="input-icon">
+                                        •
+                                    </span>
+
+                                    <input type="password" id="loginPassword" class="form-input"
+                                        placeholder="Enter your password" required>
+
+                                    <button type="button" class="password-toggle"
+                                        onclick="togglePassword('loginPassword', this)">
+                                        Show
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="form-options">
+
+                                <label class="remember">
+
+                                    <input type="checkbox" id="rememberMe">
+
+                                    Remember me
+
+                                </label>
+
+                                <a href="#" class="forgot">
+                                    Forgot password?
+                                </a>
+
+                            </div>
+
+
+                            <button type="submit" class="submit-btn" id="loginButton">
+
+                                Sign In
+
+                            </button>
+
+
+                            <p class="terms">
+                                By continuing, you agree to the
+                                <a href="#">Terms</a> and
+                                <a href="#">Privacy Policy</a>.
+                            </p>
+
+                        </form>
+
+
+                        <!-- =================================================
+                         SIGN UP
+                    ================================================== -->
+
+                        <form id="signUpForm" class="form-panel" onsubmit="handleSignUp(event)">
+
+                            <div class="form-group">
+
+                                <label class="form-label">
+                                    Full name
+                                </label>
+
+                                <div class="input-wrapper">
+
+                                    <span class="input-icon">
+                                        ◯
+                                    </span>
+
+                                    <input type="text" id="fullName" class="form-input"
+                                        placeholder="Enter your full name" required>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label class="form-label">
+                                    Email address
+                                </label>
+
+                                <div class="input-wrapper">
+
+                                    <span class="input-icon">
+                                        @
+                                    </span>
+
+                                    <input type="email" id="signupEmail" class="form-input"
+                                        placeholder="you@example.com" required>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label class="form-label">
+                                    Password
+                                </label>
+
+                                <div class="input-wrapper">
+
+                                    <span class="input-icon">
+                                        •
+                                    </span>
+
+                                    <input type="password" id="signupPassword" class="form-input"
+                                        placeholder="Create a password" required oninput="checkPasswordStrength()">
+
+                                    <button type="button" class="password-toggle"
+                                        onclick="togglePassword('signupPassword', this)">
+                                        Show
+                                    </button>
+
+                                </div>
+
+
+                                <div class="password-strength" id="passwordStrength">
+
+                                    <div class="strength-bars">
+
+                                        <span class="strength-bar"></span>
+                                        <span class="strength-bar"></span>
+                                        <span class="strength-bar"></span>
+                                        <span class="strength-bar"></span>
+
+                                    </div>
+
+                                    <span class="strength-text" id="strengthText">
+                                        Password strength
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label class="form-label">
+                                    Confirm password
+                                </label>
+
+                                <div class="input-wrapper">
+
+                                    <span class="input-icon">
+                                        •
+                                    </span>
+
+                                    <input type="password" id="confirmPassword" class="form-input"
+                                        placeholder="Confirm your password" required>
+
+                                    <button type="button" class="password-toggle"
+                                        onclick="togglePassword('confirmPassword', this)">
+                                        Show
+                                    </button>
+
+                                </div>
+
+                                <span class="field-error" id="passwordError">
+                                    Passwords do not match.
+                                </span>
+
+                            </div>
+
+
+                            <label class="remember" style="margin-bottom:20px;">
+
+                                <input type="checkbox" id="agreeTerms" required>
+
+                                I agree to the
+                                <a href="#" style="color:var(--primary);">
+                                    Terms & Privacy Policy
+                                </a>
+
+                            </label>
+
+
+                            <button type="submit" class="submit-btn" id="signupButton">
+
+                                Create Account
+
+                            </button>
+
+
+                            <p class="terms">
+                                Your account helps RoadLens keep track of
+                                your submitted road reports.
+                            </p>
+
+                        </form>
+
+                    </div>
+
+                </section>
+
+            </div>
+
+        </main>
+
+    </div>
+
+
+    <!-- TOAST -->
+
+    <div id="toast" class="toast"></div>
+
+
+    <script>
+
+        /* =========================================================
+           AUTH TAB SWITCH
+        ========================================================= */
+
+        function switchAuth(type) {
+
+            const signInTab = document.getElementById("signInTab");
+            const signUpTab = document.getElementById("signUpTab");
+
+            const signInForm = document.getElementById("signInForm");
+            const signUpForm = document.getElementById("signUpForm");
+
+            const title = document.getElementById("formTitle");
+            const subtitle = document.getElementById("formSubtitle");
+
+
+            if (type === "signin") {
+
+                signInTab.classList.add("active");
+                signUpTab.classList.remove("active");
+
+                signInForm.classList.add("active");
+                signUpForm.classList.remove("active");
+
+                title.textContent = "Welcome back";
+                subtitle.textContent =
+                    "Sign in to continue to your RoadLens account.";
+
+                document.title = "RoadLens — Sign In";
+
+            } else {
+
+                signUpTab.classList.add("active");
+                signInTab.classList.remove("active");
+
+                signUpForm.classList.add("active");
+                signInForm.classList.remove("active");
+
+                title.textContent = "Create your account";
+                subtitle.textContent =
+                    "Join RoadLens and start improving your community.";
+
+                document.title = "RoadLens — Create Account";
+            }
+        }
+
+
+        /* =========================================================
+           PASSWORD SHOW / HIDE
+        ========================================================= */
+
+        function togglePassword(inputId, button) {
+
+            const input = document.getElementById(inputId);
+
+            if (input.type === "password") {
+
+                input.type = "text";
+                button.textContent = "Hide";
+
+            } else {
+
+                input.type = "password";
+                button.textContent = "Show";
+
+            }
+        }
+
+
+        /* =========================================================
+           PASSWORD STRENGTH
+        ========================================================= */
+
+        function checkPasswordStrength() {
+
+            const password =
+                document.getElementById("signupPassword").value;
+
+            const strengthBox =
+                document.getElementById("passwordStrength");
+
+            const bars =
+                document.querySelectorAll(".strength-bar");
+
+            const strengthText =
+                document.getElementById("strengthText");
+
+
+            if (!password) {
+
+                strengthBox.style.display = "none";
+                return;
+            }
+
+
+            strengthBox.style.display = "block";
+
+
+            let score = 0;
+
+            if (password.length >= 8) score++;
+            if (/[A-Z]/.test(password)) score++;
+            if (/[0-9]/.test(password)) score++;
+            if (/[^A-Za-z0-9]/.test(password)) score++;
+
+
+            bars.forEach(bar => {
+                bar.style.background = "#e3e8e4";
+            });
+
+
+            if (score === 1) {
+
+                bars[0].style.background = "#c94a4a";
+                strengthText.textContent = "Weak password";
+
+            }
+
+            else if (score === 2) {
+
+                bars[0].style.background = "#c88938";
+                bars[1].style.background = "#c88938";
+
+                strengthText.textContent = "Fair password";
+
+            }
+
+            else if (score === 3) {
+
+                bars[0].style.background = "#6d9c61";
+                bars[1].style.background = "#6d9c61";
+                bars[2].style.background = "#6d9c61";
+
+                strengthText.textContent = "Good password";
+
+            }
+
+            else {
+
+                bars.forEach(bar => {
+                    bar.style.background = "#1d6b4f";
+                });
+
+                strengthText.textContent = "Strong password";
+            }
+        }
+
+
+        /* =========================================================
+           SIGN IN
+           FRONTEND DEMO ONLY
+           
+           Later replace with:
+           fetch("/api/auth/login", {...})
+        ========================================================= */
+
+        function handleSignIn(event) {
+
+            event.preventDefault();
+
+            const email =
+                document.getElementById("loginEmail").value.trim();
+
+            const password =
+                document.getElementById("loginPassword").value;
+
+
+            if (!email || !password) {
+
+                showToast("Please complete all fields.");
+                return;
+            }
+
+
+            const button =
+                document.getElementById("loginButton");
+
+            button.disabled = true;
+            button.textContent = "Signing in...";
+
+
+            /*
+               DEMO DELAY
+    
+               Later this section will call your backend.
+            */
+
+            setTimeout(() => {
+
+                button.disabled = false;
+                button.textContent = "Sign In";
+
+                showToast("Demo sign in successful ✓");
+
+                /*
+                   Later:
+                   window.location.href = "index.html";
+                */
+
+            }, 1000);
+        }
+
+
+        /* =========================================================
+           SIGN UP
+           FRONTEND DEMO ONLY
+           
+           Later replace with:
+           fetch("/api/auth/register", {...})
+        ========================================================= */
+
+        function handleSignUp(event) {
+
+            event.preventDefault();
+
+
+            const name =
+                document.getElementById("fullName").value.trim();
+
+            const email =
+                document.getElementById("signupEmail").value.trim();
+
+            const password =
+                document.getElementById("signupPassword").value;
+
+            const confirmPassword =
+                document.getElementById("confirmPassword").value;
+
+
+            const passwordError =
+                document.getElementById("passwordError");
+
+
+            if (password !== confirmPassword) {
+
+                passwordError.classList.add("show");
+
+                document
+                    .getElementById("confirmPassword")
+                    .classList.add("error");
+
+                return;
+            }
+
+
+            passwordError.classList.remove("show");
+
+            document
+                .getElementById("confirmPassword")
+                .classList.remove("error");
+
+
+            if (password.length < 8) {
+
+                showToast("Password must contain at least 8 characters.");
+                return;
+            }
+
+
+            const button =
+                document.getElementById("signupButton");
+
+            button.disabled = true;
+            button.textContent = "Creating account...";
+
+
+            /*
+               DEMO DELAY
+    
+               Later this section will call your backend.
+            */
+
+            setTimeout(() => {
+
+                button.disabled = false;
+                button.textContent = "Create Account";
+
+                showToast("Account created successfully ✓");
+
+                /*
+                   Later:
+                   window.location.href = "index.html";
+                */
+
+            }, 1000);
+        }
+
+
+        /* =========================================================
+           TOAST
+        ========================================================= */
+
+        function showToast(message) {
+
+            const toast =
+                document.getElementById("toast");
+
+            toast.textContent = message;
+
+            toast.classList.add("show");
+
+            clearTimeout(window.toastTimer);
+
+            window.toastTimer =
+                setTimeout(() => {
+
+                    toast.classList.remove("show");
+
+                }, 2800);
+        }
+
+
+        /* =========================================================
+           CLEAR PASSWORD ERROR WHILE TYPING
+        ========================================================= */
+
+        document
+            .getElementById("confirmPassword")
+            .addEventListener("input", () => {
+
+                const password =
+                    document.getElementById("signupPassword").value;
+
+                const confirm =
+                    document.getElementById("confirmPassword").value;
+
+                const error =
+                    document.getElementById("passwordError");
+
+                if (confirm && password === confirm) {
+
+                    error.classList.remove("show");
+
+                    document
+                        .getElementById("confirmPassword")
+                        .classList.remove("error");
+                }
+            });
+
+    </script>
+
+</body>
+
+</html>
