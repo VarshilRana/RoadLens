@@ -1293,8 +1293,13 @@
                 showToast("Account created successfully ✓");
 
                 setTimeout(() => {
-                    window.location.href = "index.html";
-                }, 1000);
+                    switchAuth("signin");
+
+                    document.getElementById("loginEmail").value = email;
+                    document.getElementById("loginPassword").value = "";
+
+                    showToast("Account created. Please sign in.");
+                }, 800);
 
             } catch (error) {
                 console.error("Sign up error:", error);
